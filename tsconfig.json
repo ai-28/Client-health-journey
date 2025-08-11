@@ -107,7 +107,7 @@
     "src/app/components/clients/AddClientSchema.js",
     "src/app/components/ui/select.jsx",
     "src/app/api/coach/client/route.js"
-, "src/app/layout.jsx", "src/app/(main)/coach/clients/[id]/page.jsx", "src/middleware.js"  ],
+, "src/app/layout.jsx", "src/app/(main)/coach/clients/[id]/page.jsx", "src/middleware.js", "src/app/components/CircularProgress.jsx"  ],
   "exclude": [
     "node_modules"
   ]

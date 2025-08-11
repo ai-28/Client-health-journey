@@ -45,92 +45,14 @@ import {
   PopoverTrigger,
 } from "@/app/components/ui/popover";
 import { Calendar } from "@/app/components/ui/calendar";
+import { Badge } from "@/app/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import ImageCard from "@/app/components/check-ins/form/resourceTabs/ImageCard";
 import MicroTrendTab from "../../components/reports/microtrendtab";
 import { useRouter } from "next/navigation";
-// Skeleton Components
-const NutrientSkeleton = () => (
-  <div className="p-4 rounded-md bg-gray-100">
-    <Skeleton className="h-6 w-16 mb-2" />
-    <Skeleton className="h-4 w-24" />
-  </div>
-);
-
-const MacroBarSkeleton = () => (
-  <div className="flex items-center justify-between py-2">
-    <div className="flex items-center gap-2">
-      <Skeleton className="h-4 w-4" />
-      <Skeleton className="h-4 w-20" />
-    </div>
-    <Skeleton className="h-4 w-16" />
-  </div>
-);
-
-const MealCardSkeleton = () => (
-  <Card className="p-4 space-y-3">
-    <div className="flex items-center justify-between">
-      <Skeleton className="h-5 w-24" />
-      <Skeleton className="h-4 w-16" />
-    </div>
-    <div className="space-y-2">
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-3/4" />
-    </div>
-  </Card>
-);
-
-const OverviewSkeleton = () => (
-  <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <NutrientSkeleton />
-      <NutrientSkeleton />
-      <NutrientSkeleton />
-    </div>
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-32" />
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <MacroBarSkeleton />
-        <MacroBarSkeleton />
-        <MacroBarSkeleton />
-        <MacroBarSkeleton />
-      </CardContent>
-    </Card>
-  </div>
-);
-
-const MealsSkeleton = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <MealCardSkeleton />
-    <MealCardSkeleton />
-    <MealCardSkeleton />
-    <MealCardSkeleton />
-  </div>
-);
-
-const TrendsSkeleton = () => (
-  <div className="space-y-6">
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-32" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-[200px] w-full" />
-      </CardContent>
-    </Card>
-    <Card>
-      <CardHeader>
-        <Skeleton className="h-6 w-32" />
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-[200px] w-full" />
-      </CardContent>
-    </Card>
-  </div>
-);
+import { CircularProgress } from "@/app/components/CircularProgress";
 
 const WelcomeCardSkeleton = () => (
   <Card className="space-y-4">
@@ -174,6 +96,42 @@ const getComplianceScore = (aiReview) => {
   } catch (error) {
     console.error("Error parsing compliance score:", error);
     return "0";
+  }
+};
+
+const getComplianceBadge = (complianceScore) => {
+  const score = Number(complianceScore);
+  
+  if (score >= 9) {
+    return {
+      text: "Excellent",
+      className: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100"
+    };
+  } else if (score >= 8) {
+    return {
+      text: "Very Good",
+      className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100"
+    };
+  } else if (score >= 7) {
+    return {
+      text: "Good",
+      className: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100"
+    };
+  } else if (score >= 6) {
+    return {
+      text: "Fair",
+      className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100"
+    };
+  } else if (score >= 5) {
+    return {
+      text: "Needs Improvement",
+      className: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-100"
+    };
+  } else {
+    return {
+      text: "Poor",
+      className: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100"
+    };
   }
 };
 
@@ -242,11 +200,11 @@ const formatNutrientName = (key) => {
 };
 
 const getColorForPercentage = (percentage) => {
-  if (percentage >= 100) return '#22c55e'; // Green for meeting target
-  if (percentage >= 75) return '#84cc16'; // Light green for close to target
-  if (percentage >= 50) return '#eab308'; // Yellow for moderate
-  if (percentage >= 25) return '#f97316'; // Orange for low
-  return '#ef4444'; // Red for very low
+  if (percentage >= 100) return 'success'; // Green for meeting target
+  if (percentage >= 75) return 'default'; // Light green for close to target
+  if (percentage >= 50) return 'warning'; // Yellow for moderate
+  if (percentage >= 25) return 'destructive'; // Orange for low
+  return 'destructive'; // Red for very low
 };
 
 function combineMicronutrientTotals(micronutrients) {
@@ -435,24 +393,7 @@ export default function HealthTracker() {
       {label}
     </Button>
   );
-  function getMacroIcon(label) {
-    switch (label) {
-      case "Protein":
-        return <Target className="w-3 h-3  text-blue-400" />;
-      case "Fruit":
-        return <Target className="w-3 h-3 text-blue-500" />;
-      case "Vegetables":
-        return <Target className="w-3 h-3 text-orange-500" />;
-      case "Carbs":
-        return <Target className="w-3 h-3 text-purple-500" />;
-      case "Fats":
-        return <Activity className="w-3 h-3 text-red-500" />;
-      case "Other":
-        return <CheckCircle className="w-3 h-3 text-green-500" />;
-      default:
-        return null;
-    }
-  }
+
   function getMealIcon(meal) {
     switch (meal) {
       case "Meal 1":
@@ -469,19 +410,71 @@ export default function HealthTracker() {
   }
 
   // Macro Bar Component
-  const MacroBar = ({ label, current, total, unit = "g" }) => (
-    <div className="flex items-center justify-between py-2">
-      <div className="flex items-center gap-2">
-        <div>{getMacroIcon(label)}</div>
-        <span className="text-sm">{label}</span>
+  const MacroBar = ({ label, current, total, unit = "g" }) => {
+    const percentage = Math.max(0, Math.min(current/total*100, 100));
+    const progressColor = getColorForPercentage(percentage);
+    
+    // Get badge styling and text based on percentage
+    const getBadgeInfo = (percentage) => {
+      if (percentage >= 100) {
+        return {
+          text: "On Target",
+          className: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100",
+          icon: <CheckCircle className="w-3 h-3 mr-1" />
+        };
+      } else if (percentage >= 75) {
+        return {
+          text: "Close to Target",
+          className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100",
+          icon: <CheckCircle className="w-3 h-3 mr-1" />
+        };
+      } else if (percentage >= 50) {
+        return {
+          text: "Moderate",
+          className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100",
+          icon: <CheckCircle className="w-3 h-3 mr-1" />
+        };
+      } else if (percentage >= 25) {
+        return {
+          text: "Low",
+          className: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-100",
+          icon: <CheckCircle className="w-3 h-3 mr-1" />
+        };
+      } else {
+        return {
+          text: "Very Low",
+          className: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100",
+          icon: <CheckCircle className="w-3 h-3 mr-1" />
+        };
+      }
+    };
+    
+    const badgeInfo = getBadgeInfo(percentage);
+    
+    return (
+      <div className="flex flex-col items-center space-y-3">
+        <CircularProgress 
+          value={percentage} 
+          size={90}
+          color={progressColor}
+        >
+          <div className="text-center">
+            <div className="text-lg font-bold">{Math.round(percentage)}%</div>
+          </div>
+        </CircularProgress>
+        <div className="text-center">
+          <h4 className="font-semibold">{label}</h4>
+          <p className="text-sm text-muted-foreground">
+            {current}g / {total}g
+          </p>
+          <Badge className={`mt-1 ${badgeInfo.className}`}>
+            {badgeInfo.icon}
+            {badgeInfo.text}
+          </Badge>
+        </div>
       </div>
-      <span className="text-sm font-medium">
-        {current}/{total}
-        &nbsp;
-        {unit}
-      </span>
-    </div>
-  );
+    );
+  };
 
   // Meal Card Component
   const MealCard = ({
@@ -694,7 +687,7 @@ export default function HealthTracker() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto space-y-6">
+      <div className=" mx-auto space-y-6">
         {loading ? (
           <>
             <WelcomeCardSkeleton />
@@ -834,73 +827,125 @@ export default function HealthTracker() {
           </div>
         ) : (
           <>
-            <Card className="space-y-4">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <h1 className="text-2xl font-bold text-[#1F2937]">
-                    Welcome back, {user?.name}!
-                  </h1>
-                  <span className="text-2xl">👋</span>
-                </CardTitle>
-                <p className="text-sm text-gray-600">
-                  Started {new Date(checkIns?.start?.[0]?.startDate).toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric',
-                    timeZone: 'UTC'
-                  })}             
-                </p>
-              </CardHeader>
-
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-r from-purple-600 to-blue-700 text-white">
+              <div className="container mx-auto px-4 py-8">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-500">{getComplianceScore(checkIns?.aiReview)}/10</div>
-                  <div className="text-xs text-gray-500">Excellent</div>
-                  <div className="text-xs text-gray-500">Weekly Compliance</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-500">{checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight}/
-                    {checkIns?.start?.[0]?.initialWeight} lbs
-                  </div>
-                  <div className="text-xs text-gray-500">Current/Initial</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-700">{checkIns?.start?.[0]?.goalWeight} lbs</div>
-                  <div className="text-xs text-gray-500">Goal Weight</div>
-                </div>
-                <div className="text-center">
-                  <div 
-                  className={`${
-                      checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight -
-                        checkIns?.start?.[0]?.initialWeight >
-                      0
-                        ? "text-[#e90f0f]"
-                        : "text-[#16A34A]"
-                    } text-2xl font-bold`}>
-                    {checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight -
-                      checkIns?.start?.[0]?.initialWeight >
-                    0
-                      ? `+${
-                        Number(
-                          checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight -
-                          checkIns?.start?.[0]?.initialWeight).toFixed(1)
-                        }`
-                      : `-${
-                        Number(
-                          checkIns?.start?.[0]?.initialWeight -
-                          checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight
-                        ).toFixed(1)
-                        }`}
-                         &nbsp;lbs
-                        </div>
-                  <div className="text-xs text-gray-500">Current</div>
+                  <h1 className="text-3xl font-display font-bold">Welcome back, {user?.name}! 👋</h1>
+                  <p className="text-lg text-purple-100 mt-2">Your comprehensive wellness journey tracking</p>
+                  <p className="text-sm text-gray-100">
+                        Started {new Date(checkIns?.start?.[0]?.startDate).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                          timeZone: 'UTC'
+                        })}             
+                      </p>
                 </div>
               </div>
-            </Card>
+            </div>
+
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="premium-card group">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center space-y-4">
+                <CircularProgress 
+                  value={getComplianceScore(checkIns?.aiReview)*10} 
+                  size={100}
+                  color="success"
+                >
+                  <div className="text-center">
+                    <div className="text-xl font-bold">{getComplianceScore(checkIns?.aiReview)*10}%</div>
+                  </div>
+                </CircularProgress>
+                <div className="text-center">
+                  <h3 className="font-display font-semibold text-lg">Compliance</h3>
+                  <Badge className={`mt-2 ${getComplianceBadge(getComplianceScore(checkIns?.aiReview)).className}`}>
+                    {getComplianceBadge(getComplianceScore(checkIns?.aiReview)).text}
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="premium-card group">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center space-y-4">
+                <CircularProgress 
+                  value={Number(checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight)/Number(checkIns?.start?.[0]?.initialWeight)*100} 
+                  size={100}
+                  color="default"
+                >
+                  <div className="text-center">
+                    <div className="text-xl font-bold">{checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight}</div>
+                    <div className="text-xs text-muted-foreground">lbs</div>
+                  </div>
+                </CircularProgress>
+                <div className="text-center">
+                  <h3 className="font-display font-semibold text-lg">Current Weight</h3>
+                  <div className="flex items-center gap-1 justify-center mt-1">
+                    <TrendingUp className="h-4 w-4 text-green-500" />
+                    <span className="text-sm text-green-500 font-medium">{(checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight - checkIns?.start?.[0]?.initialWeight).toFixed(1)} lbs from start</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="premium-card group">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center space-y-4">
+                <CircularProgress 
+                  value={100} 
+                  size={100}
+                  color="warning"
+                >
+                  <div className="text-center">
+                    <div className="text-xl font-bold">{checkIns?.start?.[0]?.goalWeight}</div>
+                    <div className="text-xs text-muted-foreground">lbs</div>
+                  </div>
+                </CircularProgress>
+                <div className="text-center">
+                  <h3 className="font-display font-semibold text-lg">Goal Weight</h3>
+                  <div className="flex items-center gap-1 justify-center mt-1">
+                    <Target className="h-4 w-4 text-primary" />
+                    <span className="text-sm text-muted-foreground">
+                      {(checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight - checkIns?.start?.[0]?.goalWeight).toFixed(1)} lbs to go
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="premium-card group">
+            <CardContent className="p-6">
+              <div className="flex flex-col items-center space-y-4">
+                <CircularProgress 
+                  value={Math.max(0, Math.min(((Number(checkIns?.start?.[0]?.initialWeight)-Number(checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight))/(Number(checkIns?.start?.[0]?.initialWeight)-Number(checkIns?.start?.[0]?.goalWeight))*100).toFixed(0), 100))} 
+                  max={100}
+                  min={0}
+                  size={100}
+                  color="success"
+                >
+                  <div className="text-center">
+                    <div className="text-xl font-bold">{((Number(checkIns?.start?.[0]?.initialWeight)-Number(checkIns?.progressData?.[checkIns?.progressData?.length - 1]?.weight))/(Number(checkIns?.start?.[0]?.initialWeight)-Number(checkIns?.start?.[0]?.goalWeight))*100).toFixed(0)}%</div>
+                  </div>
+                </CircularProgress>
+                <div className="text-center">
+                  <h3 className="font-display font-semibold text-lg">Progress</h3>
+                  <p className="text-sm text-muted-foreground">Of total goal achieved</p>
+                  <Badge className="mt-2 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100">
+                    On Track
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
 
             {/* Time Range Toggle for Overview */}
-            <Card className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="font-semibold">Data Time Range</h3>
@@ -930,7 +975,6 @@ export default function HealthTracker() {
                   </Button>
                 </div>
               </div>
-            </Card>
 
             <div className="grid grid-cols-2 sm:flex w-full gap-2 bg-white rounded-[4px] p-1 shadow-md">
               <TabButton
@@ -997,38 +1041,24 @@ export default function HealthTracker() {
             {activeTab === "overview" && (
               <div className="space-y-6">
                 {/* AI Health Assistant */}
-                {checkIns?.aiReview?.[0]&&<Card className="p-4">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Bot className="w-5 h-5" />
-                    <h2 className="font-semibold">Your AI Health Assistant({timeRange === "week" ? "weekly" : "monthly"} trend) 🤖</h2>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-start gap-3 p-3 bg-yellow-50 rounded-lg">
-                      <span className="w-[24px] h-[24px]">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        className="lucide lucide-award w-5 h-5 text-yellow-500"
-                      >
-                        <path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"></path>
-                        <circle cx="12" cy="8" r="6"></circle>
-                      </svg>
-                      </span>
-                      <div>
-                        {
-                        timeRange === "week" ? checkIns?.aiReview && JSON.parse(checkIns?.aiReview?.[0].content).weeklyTrend : checkIns?.aiReview && JSON.parse(checkIns?.aiReview?.[0].content).monthlyTrend
-                        }
-                      </div>
-                      </div>
-                  </div>
-                </Card>}
+                {checkIns?.aiReview?.[0]&&
+                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+                      <span className="text-white text-sm">AI</span>
+                    </div>
+                    Your AI Health Assistant({timeRange === "week" ? "weekly" : "monthly"} trend) 
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm leading-relaxed">
+                  {
+                    timeRange === "week" ? checkIns?.aiReview && JSON.parse(checkIns?.aiReview?.[0].content).weeklyTrend : checkIns?.aiReview && JSON.parse(checkIns?.aiReview?.[0].content).monthlyTrend
+                  }
+                  </p>
+                </CardContent>
+              </Card>}
                 {/* Today's Macros */}
                 <Card className="p-4">
                   <h2 className="font-semibold mb-4">{(() => {
@@ -1047,18 +1077,32 @@ export default function HealthTracker() {
                     }
                     return 'Latest';
                   })()} Macros</h2>
-                  <div className="space-y-2">
-                    <MacroBar label="Protein" current={currentPortion?.proteinPortion} total={Math.floor(portionRule?.protein)} />
-                    <MacroBar label="Fruit" current={currentPortion?.fruitPortion} total={Math.floor(portionRule?.fruit)} />
-                    <MacroBar label="Vegetables" current={currentPortion?.vegetablesPortion} total={Math.floor(portionRule?.vegetables)} />
-                    <MacroBar
-                      label="Carbs"
-                      current={Number(currentPortion?.carbsPortion?.toFixed(0))}
-                      total={Math.floor(portionRule?.carbs)}
-                      unit="g"
-                    />
-                    <MacroBar label="Fats" current={currentPortion?.fatsPortion} total={Math.floor(portionRule?.fats)} />
-                    <MacroBar label="Other" current={currentPortion?.otherPortion} total={Math.floor(portionRule?.other)} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    
+                    {Math.floor(portionRule?.protein) > 0 && (
+                      <MacroBar label="Protein" current={currentPortion?.proteinPortion} total={Math.floor(portionRule?.protein)} />
+                    )}
+                    {Math.floor(portionRule?.fruit) > 0 && (
+                      <MacroBar label="Fruit" current={currentPortion?.fruitPortion} total={Math.floor(portionRule?.fruit)} />
+                    )}
+                    {Math.floor(portionRule?.vegetables) > 0 && (
+                      <MacroBar label="Vegetables" current={currentPortion?.vegetablesPortion} total={Math.floor(portionRule?.vegetables)} />
+                    )}
+                    {Math.floor(portionRule?.carbs) > 0 && (
+                      <MacroBar
+                        label="Carbs"
+                        current={Number(currentPortion?.carbsPortion?.toFixed(0))}
+                        total={Math.floor(portionRule?.carbs)}
+                        unit="g"
+                      />
+                    )}
+                    {Math.floor(portionRule?.fats) > 0 && (
+                      <MacroBar label="Fats" current={currentPortion?.fatsPortion} total={Math.floor(portionRule?.fats)} />
+                    )}
+                    {Math.floor(portionRule?.other) > 0 && (
+                      <MacroBar label="Other" current={currentPortion?.otherPortion} total={Math.floor(portionRule?.other)} />
+                    )}
+                    
                   </div>
                 </Card>
               </div>

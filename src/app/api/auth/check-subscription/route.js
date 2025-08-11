@@ -5,6 +5,7 @@ import { checkSubscriptionStatus } from '@/app/lib/subscriptionCheck';
 import { userRepo } from '@/app/lib/db/userRepo';
 
 export async function GET() {
+
     try {
         const session = await getServerSession(authOptions);
 

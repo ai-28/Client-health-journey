@@ -100,14 +100,12 @@ const ClientDashboard = () => {
       <WelcomeModal open={showWelcome} onClose={handleDismiss} onDontShowAgain={handleDontShowAgain} />
       {/* Daily motivation message */}
       <ClientDailyDrip />
-      {/* Program progress */}
-      {/* <ProgramProgress /> */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 gap-y-4 w-full">
-        {/* Latest stats */}
+
+
         <LatestStats />
-        {/* Quick actions */}
+
         <QuickActions />
-      </div>
+
     </div>
   );
 };

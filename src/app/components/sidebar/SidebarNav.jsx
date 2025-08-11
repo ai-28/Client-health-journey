@@ -29,20 +29,32 @@ const SidebarNav = ({ items }) => {
   };
   
   return (
-    <ScrollArea className="flex-1 py-2">
-      <nav className="grid gap-1 px-2">
+    <ScrollArea className="flex-1 py-4">
+      <nav className="grid gap-2 px-4">
         {items.map((item, index) => (
           <Link
             onClick={() => handleClick(item)}
             key={index}
             href={item.href}
             className={cn(
-              "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              pathname === item.href && "bg-accent text-accent-foreground"
+              "group flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ease-in-out",
+              "hover:bg-gray-100",
+              pathname === item.href 
+                ? "bg-gray-200 text-gray-900 border-l-4 border-gray-600" 
+                : "text-gray-700 hover:text-gray-900"
             )}
           >
-            <item.icon className="h-5 w-5" />
-            {item.title}
+            {/* Simple icon */}
+            <div className="p-2 rounded-lg bg-gray-100 text-gray-600">
+              <item.icon className="h-5 w-5" />
+            </div>
+            
+            {/* Simple text */}
+            <span className="font-medium">
+              {item.title}
+            </span>
+            
+            {/* Notification badge for messages */}
             {item.title == "Messages" ? (
               <NotificationBadge
                 email={user?.email}
@@ -51,6 +63,8 @@ const SidebarNav = ({ items }) => {
             ) : (
               ""
             )}
+            
+
           </Link>
         ))}
       </nav>

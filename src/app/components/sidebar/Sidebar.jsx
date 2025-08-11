@@ -20,47 +20,63 @@ export function Sidebar({ mobileOpen = false, onClose }) {
 
   // Sidebar content
   const sidebarContent = !user ? (
-    <div className="flex items-center justify-center h-screen w-full bg-background border-r">
-      <Loader2 className="h-6 w-6 animate-spin" />
+    <div className="flex items-center justify-center h-screen w-full bg-gray-50 border-r border-gray-200">
+      <Loader2 className="h-6 w-6 animate-spin text-gray-600" />
     </div>
   ) : (
     <div
       className={cn(
-        "flex flex-col h-screen border-r bg-background w-full sm:w-72 w-64 transition-transform duration-300 ease-in-out",
+        "flex flex-col h-screen border-r w-full sm:w-72 w-64 transition-all duration-300 ease-in-out bg-white",
         mobileOpen
-          ? "fixed z-50 top-0 left-0 h-screen w-[80vw] max-w-[320px] bg-white shadow-lg translate-x-0 sm:static sm:translate-x-0 block"
-          : "-translate-x-full sm:translate-x-0 sm:static hidden sm:flex"
+          ? "fixed z-50 top-0 left-0 h-screen w-[80vw] max-w-[320px] bg-white shadow-lg translate-x-0 sm:static sm:translate-x-0 block border-gray-200"
+          : "-translate-x-full sm:translate-x-0 sm:static hidden sm:flex border-gray-200"
       )}
       style={mobileOpen ? {} : {}}>
-      <div className="flex items-center justify-between p-4 border-b">
-        <Link href="/" className="flex items-center gap-2">
-          <BookMarked className="h-6 w-6 text-primary" />
-          <span className="font-semibold">Client Health Tracker™</span>
+      {/* Simple header */}
+      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
+        <Link href="/" className="flex items-center gap-3 group">
+          <div className="p-2 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-all duration-200">
+            <BookMarked className="h-6 w-6 text-gray-700" />
+          </div>
+          <span className="font-medium text-lg text-gray-800">Client Health Tracker™</span>
         </Link>
         {/* Close button for mobile drawer */}
         {mobileOpen && (
-          <button onClick={onClose} className="sm:hidden ml-auto p-2 rounded hover:bg-gray-100">
+          <button 
+            onClick={onClose} 
+            className="sm:hidden ml-auto p-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition-all duration-200"
+          >
             <span className="sr-only">Close menu</span>
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            <svg className="h-6 w-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
         )}
       </div>
-      <SidebarNav
-        items={
-          user.role === "admin"
-            ? adminNavItems
-            : user.role === "clinic_admin"
-            ? clinicAdminNavItems
-            : user.role === "coach"
-            ? coachNavItems
-            : clientNavItems
-        }
-      />
-      <SidebarProfile
-        user={user}
-        userRole={user.role}
-        roleIcon={User}
-      />
+      
+      {/* Navigation section */}
+      <div className="flex-1 overflow-hidden">
+        <SidebarNav
+          items={
+            user.role === "admin"
+              ? adminNavItems
+              : user.role === "clinic_admin"
+              ? clinicAdminNavItems
+              : user.role === "coach"
+              ? coachNavItems
+              : clientNavItems
+          }
+        />
+      </div>
+      
+      {/* Profile section - fixed at bottom */}
+      <div className="flex-shrink-0">
+        <SidebarProfile
+          user={user}
+          userRole={user.role}
+          roleIcon={User}
+        />
+      </div>
     </div>
   );
 

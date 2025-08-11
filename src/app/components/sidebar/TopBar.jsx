@@ -7,7 +7,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "../../components/ui/avatar";
-import { Bell, Settings, LogOut, Menu } from "lucide-react";
+import { Bell, Settings, LogOut, Menu, BookMarked } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,6 +30,7 @@ const TopBar = ({ onMenuClick }) => {
     logo: null,
     clinicName: null,
   };
+  
   const onSetting = () => {
     if (user?.role === "admin") {
       router.push("/admin/settings");
@@ -41,91 +42,135 @@ const TopBar = ({ onMenuClick }) => {
       router.push("/clinic/settings");
     }
   };
+  
   // Extract first name from user's full name
   const firstName = user?.name ? user.name.split(" ")[0] : "";
 
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-2">
+    <header className="bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
       <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          {/* Hamburger menu for mobile */}
+        <div className="flex items-center gap-4">
+          {/* Simple hamburger menu for mobile */}
           <Button
             variant="ghost"
             size="icon"
-            className="sm:hidden mr-2"
+            className="sm:hidden p-2 rounded-lg bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all duration-200"
             onClick={onMenuClick}
           >
-            <Menu size={24} />
+            <Menu size={20} className="text-gray-600" />
             <span className="sr-only">Open menu</span>
           </Button>
-          {theme.logo ? (
-            <img
-              src={theme.logo}
-              alt={theme.clinicName || "Clinic logo"}
-              className="h-8 w-auto"
-            />
-          ) : (
-            <h2 className="text-lg md:text-xl font-medium text-gray-800 mr-4">
-              Client Health Tracker™
-            </h2>
-          )}
-          <span className="hidden md:inline-block bg-primary-100 text-primary-800 text-xs font-medium py-1 px-2 rounded">
+          
+          {/* Simple logo and title section */}
+          <div className="flex items-center gap-3">
+            {theme.logo ? (
+              <img
+                src={theme.logo}
+                alt={theme.clinicName || "Clinic logo"}
+                className="h-10 w-auto"
+              />
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gray-200 rounded-lg">
+                  <BookMarked className="h-6 w-6 text-gray-700" />
+                </div>
+                <h2 className="text-xl md:text-2xl font-medium text-gray-800">
+                  Client Health Tracker™
+                </h2>
+              </div>
+            )}
+          </div>
+          
+          {/* Simple role badge */}
+          <span className="hidden md:inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium bg-gray-100 text-gray-700 border border-gray-200">
             {user?.role === "client" ? "Client Portal" : "Staff Portal"}
           </span>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
+          {/* Simple notification button */}
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-500 hover:text-gray-700"
+            className="relative p-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all duration-200"
           >
-            <Bell size={20} />
+            <Bell size={20} className="text-gray-600" />
+            {/* Notification indicator */}
+            <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
           </Button>
 
+          {/* Simple user dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="relative h-10 w-10 rounded-full"
+                className="relative h-12 w-12 rounded-lg bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all duration-200 p-0"
               >
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-12 w-12 rounded-lg border-2 border-gray-200">
                   <AvatarImage
                     src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`}
                     alt={user?.name || "User"}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-gray-200 text-gray-700 font-medium text-lg">
                     {user?.name?.slice(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel>Welcome, {user?.name}</DropdownMenuLabel>
-              <DropdownMenuItem className="flex items-center">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
+            
+            <DropdownMenuContent 
+              className="w-72 bg-white border border-gray-200 shadow-lg rounded-lg p-2" 
+              align="end"
+            >
+              {/* Simple welcome header */}
+              <DropdownMenuLabel className="px-4 py-3 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-200 rounded-lg">
+                    <BookMarked className="h-4 w-4 text-gray-700" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800">Welcome back!</p>
+                    <p className="text-xs text-gray-600">Signed in as {user?.role}</p>
+                  </div>
+                </div>
+              </DropdownMenuLabel>
+              
+              <DropdownMenuSeparator className="my-2" />
+              
+              {/* User info */}
+              <DropdownMenuItem className="px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200 cursor-pointer">
+                <div className="flex flex-col space-y-1 w-full">
+                  <p className="text-sm font-medium text-gray-800 leading-none">
                     {user?.name}
                   </p>
-                  <p className="text-xs leading-none text-muted-foreground">
+                  <p className="text-xs leading-none text-gray-600">
                     {user?.email}
                   </p>
                 </div>
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              
+              <DropdownMenuSeparator className="my-2" />
+              
+              {/* Settings option */}
               <DropdownMenuItem
-                className="flex items-center cursor-pointer"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-50 transition-all duration-200 cursor-pointer"
                 onClick={onSetting}
               >
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <Settings className="h-4 w-4 text-gray-600" />
+                </div>
+                <span className="font-medium text-gray-700">Settings</span>
               </DropdownMenuItem>
+              
+              {/* Logout option */}
               <DropdownMenuItem
-                className="flex items-center text-red-500 focus:text-red-500 cursor-pointer"
+                className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-50 transition-all duration-200 cursor-pointer"
                 onClick={() => signOut()}
               >
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <div className="p-2 bg-red-100 rounded-lg">
+                  <LogOut className="h-4 w-4 text-red-600" />
+                </div>
+                <span className="font-medium text-red-700">Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

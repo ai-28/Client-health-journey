@@ -114,19 +114,6 @@ async function createClient(
   return client;
 }
 
-async function getProgressdata(email) {
-  const progress = await sql`
-    SELECT 
-      "selectedDate", "weight", "waist", "energyLevel", "moodLevel", "sleepHours"
-    FROM "CheckIn"
-    WHERE "email" = ${email}
-    ORDER BY "selectedDate" DESC
-    LIMIT 1
-  `;
-  return progress;
-}
-
-
 async function createCheckIn(
   name,
   email,
@@ -616,6 +603,170 @@ async function getClientProfilebyId(id) {
   return result[0] || null;
 }
 
+async function getTrendData(email) {
+  try {
+    // First, get the latest check-in date for this client
+    const latestCheckInDate = await sql`
+      SELECT MAX("selectedDate") as latest_date
+      FROM "CheckIn"
+      WHERE "email" = ${email}
+    `;
+
+    if (!latestCheckInDate[0]?.latest_date) {
+      // No check-ins found
+      return {
+        current: { weight: 0, sleepHours: 0 },
+        currentWeek: { weight: 0, sleepHours: 0 },
+        previousWeek: { weight: 0, sleepHours: 0 },
+        initialWeight: 0,
+        goalWeight: 0,
+        weightTrend: 0,
+        sleepTrend: 0,
+        compliance: {
+          current: 0,
+          previous: 0,
+          trend: 0
+        },
+        hasEnoughData: {
+          weight: false,
+          sleep: false
+        },
+        dataContext: {
+          totalCheckIns: 0,
+          currentWeekCount: 0,
+          previousWeekCount: 0
+        }
+      };
+    }
+
+    const latestDate = latestCheckInDate[0].latest_date;
+
+    // Get current week's data (last 7 days from latest check-in date)
+    const currentWeekData = await sql`
+      SELECT 
+        "weight", "sleepHours", "selectedDate"
+      FROM "CheckIn"
+      WHERE "email" = ${email}
+        AND "selectedDate" >= (${latestDate} - INTERVAL '7 days')
+      ORDER BY "selectedDate" ASC
+    `;
+
+    // Get previous week's data (7-14 days before latest check-in date)
+    const previousWeekData = await sql`
+      SELECT 
+        "weight", "sleepHours", "selectedDate"
+      FROM "CheckIn"
+      WHERE "email" = ${email}
+        AND "selectedDate" >= (${latestDate} - INTERVAL '14 days')
+        AND "selectedDate" < (${latestDate} - INTERVAL '7 days')
+      ORDER BY "selectedDate" ASC
+    `;
+
+    // Get initial weight and goal weight
+    const clientData = await sql`
+      SELECT "initialWeight", "goalWeight"
+      FROM "Client"
+      WHERE "email" = ${email}
+    `;
+
+    // Calculate current week averages
+    const currentWeekWeight = currentWeekData.length > 0
+      ? currentWeekData.reduce((sum, item) => sum + Number(item.weight || 0), 0) / currentWeekData.length
+      : 0;
+
+    const currentWeekSleep = currentWeekData.length > 0
+      ? currentWeekData.reduce((sum, item) => sum + Number(item.sleepHours || 0), 0) / currentWeekData.length
+      : 0;
+
+    // Calculate previous week averages
+    const previousWeekWeight = previousWeekData.length > 0
+      ? previousWeekData.reduce((sum, item) => sum + Number(item.weight || 0), 0) / previousWeekData.length
+      : 0;
+
+    const previousWeekSleep = previousWeekData.length > 0
+      ? previousWeekData.reduce((sum, item) => sum + Number(item.sleepHours || 0), 0) / previousWeekData.length
+      : 0;
+
+    // Get latest values (from the most recent check-in)
+    const latestData = currentWeekData.length > 0 ? currentWeekData[currentWeekData.length - 1] : null;
+
+    // Calculate weekly compliance (percentage of days with check-ins)
+    const currentWeekCompliance = currentWeekData.length > 0
+      ? Math.round((currentWeekData.length / 7) * 100)
+      : 0;
+
+    const previousWeekCompliance = previousWeekData.length > 0
+      ? Math.round((previousWeekData.length / 7) * 100)
+      : 0;
+
+    const complianceTrend = previousWeekCompliance > 0
+      ? currentWeekCompliance - previousWeekCompliance
+      : 0;
+
+    return {
+      current: {
+        weight: latestData?.weight || 0,
+        sleepHours: latestData?.sleepHours || 0
+      },
+      currentWeek: {
+        weight: currentWeekWeight,
+        sleepHours: currentWeekSleep
+      },
+      previousWeekData: previousWeekData,
+      previousWeek: {
+        weight: previousWeekWeight,
+        sleepHours: previousWeekSleep
+      },
+      initialWeight: clientData[0]?.initialWeight || 0,
+      goalWeight: clientData[0]?.goalWeight || 0,
+      weightTrend: previousWeekWeight > 0 ? (currentWeekWeight - previousWeekWeight) : 0,
+      sleepTrend: previousWeekSleep > 0 ? (currentWeekSleep - previousWeekSleep) : 0,
+      // Add compliance data
+      compliance: {
+        current: currentWeekCompliance,
+        previous: previousWeekCompliance,
+        trend: complianceTrend
+      },
+      // Add flags for better UI handling
+      hasEnoughData: {
+        weight: previousWeekWeight > 0,
+        sleep: previousWeekSleep > 0
+      },
+      dataContext: {
+        totalCheckIns: currentWeekData.length + previousWeekData.length,
+        currentWeekCount: currentWeekData.length,
+        previousWeekCount: previousWeekData.length
+      }
+    };
+  } catch (error) {
+    console.error("Error getting trend data:", error);
+    return {
+      current: { weight: 0, sleepHours: 0 },
+      currentWeek: { weight: 0, sleepHours: 0 },
+      previousWeek: { weight: 0, sleepHours: 0 },
+      initialWeight: 0,
+      previousWeekData: [],
+      goalWeight: 0,
+      weightTrend: 0,
+      sleepTrend: 0,
+      compliance: {
+        current: 0,
+        previous: 0,
+        trend: 0
+      },
+      hasEnoughData: {
+        weight: false,
+        sleep: false
+      },
+      dataContext: {
+        totalCheckIns: 0,
+        currentWeekCount: 0,
+        previousWeekCount: 0
+      }
+    };
+  }
+}
+
 export const clientRepo = {
   getClients,
   getclientsbyclinicId,
@@ -623,7 +774,6 @@ export const clientRepo = {
   getnumclientsbyClinicId,
   getnumprojectsbyId,
   createClient,
-  getProgressdata,
   createCheckIn,
   getCheckInsbyRange,
   getnumCheckInbyId,
@@ -647,4 +797,5 @@ export const clientRepo = {
   getProgramIdbyClientEmail,
   getClientIdbyEmail,
   getClientProfilebyId,
+  getTrendData,
 };
