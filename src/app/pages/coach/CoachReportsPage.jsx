@@ -202,7 +202,7 @@ console.log("selected", checkInData)
 
       {/* Check-ins Chart */}
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <CardTitle className="text-xl">Client Progress</CardTitle>
             <div className="flex items-center gap-4">
               <Select onValueChange={(value) => setSelectedClient(value)} defaultValue={selectedClient}>
