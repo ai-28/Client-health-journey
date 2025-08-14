@@ -76,15 +76,15 @@ const DripMessageCard = () => {
   }
 
   return (
-    <Card className="premium-card border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/80 to-indigo-50/80 dark:from-blue-950/40 dark:to-indigo-950/40">
+    <Card className="premium-card border-l-4 border-l-blue-500 bg-gradient-to-r from-blue-50/80 to-indigo-50/80">
     <CardContent className="p-8">
       <div className="flex items-center gap-4">
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg">
           <div className="text-3xl">✨</div>
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white mb-2">Daily Motivation</h3>
-          <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">{message}</p>
+          <h3 className="text-xl font-display font-bold text-gray-900 mb-2">Daily Motivation</h3>
+          <p className="text-gray-700 text-lg leading-relaxed">{message}</p>
           {/* <Badge className="mt-3 bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100">
             <Award className="w-3 h-3 mr-1" />
             Consistency Streak: 12 days

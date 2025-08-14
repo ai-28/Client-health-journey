@@ -105,32 +105,32 @@ const getComplianceBadge = (complianceScore) => {
   if (score >= 9) {
     return {
       text: "Excellent",
-      className: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100"
+      className: "bg-green-100 text-green-700"
     };
   } else if (score >= 8) {
     return {
       text: "Very Good",
-      className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100"
+      className: "bg-emerald-100 text-emerald-700"
     };
   } else if (score >= 7) {
     return {
       text: "Good",
-      className: "bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100"
+      className: "bg-blue-100 text-blue-700"
     };
   } else if (score >= 6) {
     return {
       text: "Fair",
-      className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100"
+      className: "bg-yellow-100 text-yellow-700"
     };
   } else if (score >= 5) {
     return {
       text: "Needs Improvement",
-      className: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-100"
+      className: "bg-orange-100 text-orange-700"
     };
   } else {
     return {
       text: "Poor",
-      className: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100"
+      className: "bg-red-100 text-red-700"
     };
   }
 };
@@ -419,31 +419,31 @@ export default function HealthTracker() {
       if (percentage >= 100) {
         return {
           text: "On Target",
-          className: "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-100",
+          className: "bg-green-100 text-green-700",
           icon: <CheckCircle className="w-3 h-3 mr-1" />
         };
       } else if (percentage >= 75) {
         return {
           text: "Close to Target",
-          className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-100",
+          className: "bg-emerald-100 text-emerald-700",
           icon: <CheckCircle className="w-3 h-3 mr-1" />
         };
       } else if (percentage >= 50) {
         return {
           text: "Moderate",
-          className: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-100",
+          className: "bg-yellow-100 text-yellow-700",
           icon: <CheckCircle className="w-3 h-3 mr-1" />
         };
       } else if (percentage >= 25) {
         return {
           text: "Low",
-          className: "bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-100",
+          className: "bg-orange-100 text-orange-700",
           icon: <CheckCircle className="w-3 h-3 mr-1" />
         };
       } else {
         return {
           text: "Very Low",
-          className: "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-100",
+          className: "bg-red-100 text-red-700",
           icon: <CheckCircle className="w-3 h-3 mr-1" />
         };
       }
@@ -935,7 +935,7 @@ export default function HealthTracker() {
                 <div className="text-center">
                   <h3 className="font-display font-semibold text-lg">Progress</h3>
                   <p className="text-sm text-muted-foreground">Of total goal achieved</p>
-                  <Badge className="mt-2 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100">
+                  <Badge className="mt-2 bg-blue-100 text-blue-700">
                     On Track
                   </Badge>
                 </div>
@@ -1042,7 +1042,7 @@ export default function HealthTracker() {
               <div className="space-y-6">
                 {/* AI Health Assistant */}
                 {checkIns?.aiReview?.[0]&&
-                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+                <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 ">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">

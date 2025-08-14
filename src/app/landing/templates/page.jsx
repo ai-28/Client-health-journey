@@ -51,7 +51,7 @@ const Templates = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/20 dark:from-gray-950 dark:via-blue-950/30 dark:to-indigo-950/20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/20 ">
       <Header />
       
       {/* Compact Header with Background Color */}
@@ -107,7 +107,7 @@ const Templates = () => {
           </div>
 
           {/* Custom Templates Section - Premium */}
-          <Card className="premium-card bg-gradient-to-r from-primary-light/50 to-secondary-light/50 dark:from-primary-light/20 dark:to-secondary-light/20 border-2 border-primary/20">
+          <Card className="premium-card bg-gradient-to-r from-primary-light/50 to-secondary-light/50 border-2 border-primary/20">
             <CardContent className="p-12 text-center">
               <div className="flex justify-center mb-8">
                 <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-glow">

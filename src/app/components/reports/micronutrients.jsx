@@ -407,9 +407,9 @@ const getPriorityRecommendations = (data) => {
   const top3 = deficient.slice(0, 3);
   
   return (
-    <Card className="border-red-200 dark:border-red-800">
+    <Card className="border-red-200">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
+        <CardTitle className="flex items-center gap-2 text-red-700">
           <Target className="w-5 h-5" />
           Priority Focus
         </CardTitle>
@@ -419,15 +419,15 @@ const getPriorityRecommendations = (data) => {
           {top3.map((nutrient, index) => {
             const recommendations = getDetailedRecommendations(nutrient.name, nutrient.percentOfTarget);
               return (
-                <div key={nutrient.name} className="p-4 rounded-lg bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800">
+                <div key={nutrient.name} className="p-4 rounded-lg bg-red-50 border border-red-200">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-red-900 dark:text-red-100">{nutrient.name}</h4>                  </div>
+                  <h4 className="font-medium text-red-900">{nutrient.name}</h4>                  </div>
                   <Badge variant="destructive">
                     {Math.round(nutrient.percentOfTarget)}%
                   </Badge>
                 </div>
-                <p className="text-sm text-red-700 dark:text-red-300">{recommendations.tips}</p>
+                <p className="text-sm text-red-700">{recommendations.tips}</p>
                 </div>
             );
           })}
@@ -525,51 +525,51 @@ export const EnhancedMicronutrientReport = ({ data, loading }) => {
 
   return (
     <div className="space-y-6">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/20 dark:from-gray-950 dark:via-blue-950/30 dark:to-indigo-950/20">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-100/20">
 
       <div className="container mx-auto p-4 space-y-6">
 
         {/* Status Summary - Premium Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="premium-card bg-gradient-to-r from-green-50/80 to-emerald-50/80 dark:from-green-950/40 dark:to-emerald-950/40 border-l-4 border-l-green-500">
+          <Card className="premium-card bg-gradient-to-r from-green-50/80 to-emerald-50/80 border-l-4 border-l-green-500">
             <CardContent className="p-8">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
                   <CheckCircle className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div className="text-3xl font-display font-bold text-green-700 dark:text-green-400">{excellentNutrients.length}</div>
-                  <p className="text-lg font-medium text-green-600 dark:text-green-500">Meeting Goals</p>
+                  <div className="text-3xl font-display font-bold text-green-700">{excellentNutrients.length}</div>
+                  <p className="text-lg font-medium text-green-600">Meeting Goals</p>
                   <p className="text-sm text-green-500/80">Optimal levels achieved</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="premium-card bg-gradient-to-r from-orange-50/80 to-amber-50/80 dark:from-orange-950/40 dark:to-amber-950/40 border-l-4 border-l-orange-500">
+            <Card className="premium-card bg-gradient-to-r from-orange-50/80 to-amber-50/80 border-l-4 border-l-orange-500">
             <CardContent className="p-8">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg">
                   <AlertCircle className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div className="text-3xl font-display font-bold text-orange-700 dark:text-orange-400">{data.filter(n => n.percentOfTarget >= 70 && n.percentOfTarget < 100).length}</div>
-                  <p className="text-lg font-medium text-orange-600 dark:text-orange-500">Close to Goals</p>
+                  <div className="text-3xl font-display font-bold text-orange-700">{data.filter(n => n.percentOfTarget >= 70 && n.percentOfTarget < 100).length}</div>
+                  <p className="text-lg font-medium text-orange-600">Close to Goals</p>
                   <p className="text-sm text-orange-500/80">Minor adjustments needed</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="premium-card bg-gradient-to-r from-red-50/80 to-rose-50/80 dark:from-red-950/40 dark:to-rose-950/40 border-l-4 border-l-red-500">
+          <Card className="premium-card bg-gradient-to-r from-red-50/80 to-rose-50/80 border-l-4 border-l-red-500">
             <CardContent className="p-8">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center shadow-lg">
                   <AlertCircle className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <div className="text-3xl font-display font-bold text-red-700 dark:text-red-400">{deficientNutrients.length}</div>
-                  <p className="text-lg font-medium text-red-600 dark:text-red-500">Need Attention</p>
+                  <div className="text-3xl font-display font-bold text-red-700">{deficientNutrients.length}</div>
+                  <p className="text-lg font-medium text-red-600">Need Attention</p>
                   <p className="text-sm text-red-500/80">Immediate focus required</p>
                 </div>
               </div>

@@ -117,7 +117,7 @@ console.log("trendData", trendData);
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
           <div key={i} className="animate-pulse">
-            <div className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+            <div className="h-32 bg-gray-200 rounded-lg"></div>
           </div>
         ))}
       </div>
@@ -127,13 +127,13 @@ console.log("trendData", trendData);
     <div className="space-y-6">
       {/* Data Context Information */}
       {trendData && trendData.dataContext && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900 dark:text-blue-100">
+            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200">
               Data Status
             </Badge>
           </div>
-                           <div className="text-sm text-blue-700 dark:text-blue-300">
+                           <div className="text-sm text-blue-700">
                    {trendData.dataContext.totalCheckIns === 0 ? (
                      "Welcome! Start tracking your daily check-ins to see your progress trends."
                    ) : trendData.dataContext.previousWeekCount === 0 ? (
@@ -151,51 +151,51 @@ console.log("trendData", trendData);
             {/* Weight Card */}
             <Card className="premium-card group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className="text-lg font-display font-semibold text-gray-900 dark:text-white">Current Weight</CardTitle>
+                <CardTitle className="text-lg font-display font-semibold text-gray-900 ">Current Weight</CardTitle>
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
                   <Weight className="h-6 w-6 text-white" />
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="text-3xl font-display font-bold text-gray-900 dark:text-white">
+                <div className="text-3xl font-display font-bold text-gray-900">
                   {trendData.current.weight || 0} lbs
                 </div>
                 <div className="flex items-center gap-2">
                   {getWeightTrendInfo().trend !== "neutral" ? (
                     <div className={`flex items-center gap-1 px-3 py-1 rounded-full ${
                       getWeightTrendInfo().color === "green" 
-                        ? "bg-green-100 dark:bg-green-900/30" 
+                        ? "bg-green-100" 
                         : getWeightTrendInfo().color === "red"
-                        ? "bg-red-100 dark:bg-red-900/30"
-                        : "bg-blue-100 dark:bg-blue-900/30"
+                        ? "bg-red-100"
+                        : "bg-blue-100"
                     }`}>
                       {getWeightTrendInfo().trend === "down" ? (
-                        <TrendingDown className="h-4 w-4 text-green-600 dark:text-green-400" />
+                        <TrendingDown className="h-4 w-4 text-green-600" />
                       ) : getWeightTrendInfo().trend === "up" ? (
-                        <TrendingUp className="h-4 w-4 text-red-600 dark:text-red-400" />
+                        <TrendingUp className="h-4 w-4 text-red-600" />
                       ) : (
-                        <Badge className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                        <Badge className="h-4 w-4 text-blue-600" />
                       )}
                       <span className={`text-sm font-semibold ${
                         getWeightTrendInfo().color === "green" 
-                          ? "text-green-700 dark:text-green-300" 
+                          ? "text-green-700" 
                           : getWeightTrendInfo().color === "red"
-                          ? "text-red-700 dark:text-red-300"
-                          : "text-blue-700 dark:text-blue-300"
+                          ? "text-red-700"
+                          : "text-blue-700"
                       }`}>
                         {getWeightTrendInfo().text}
                       </span>
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-900/30">
-                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-100">
+                      <span className="text-sm font-semibold text-gray-700">
                         {getWeightTrendInfo().text}
                       </span>
                     </div>
                   )}
                 </div>
                 <div className="relative group">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style={{
                       width: trendData.goalWeight > 0 
                         ? `${Math.min(100, Math.max(0, ((trendData.initialWeight - trendData.current.weight) / (trendData.initialWeight - trendData.goalWeight)) * 100))}%`
@@ -216,17 +216,17 @@ console.log("trendData", trendData);
             {/* Sleep Card */}
             <Card className="premium-card group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className="text-lg font-display font-semibold text-gray-900 dark:text-white">Sleep Quality</CardTitle>
+                <CardTitle className="text-lg font-display font-semibold text-gray-900">Sleep Quality</CardTitle>
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
                   <Clock className="h-6 w-6 text-white" />
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="text-3xl font-display font-bold text-gray-900 dark:text-white">
+                <div className="text-3xl font-display font-bold text-gray-900">
                   {trendData.current.sleepHours || 0}h
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200 dark:bg-purple-900 dark:text-purple-100">
+                  <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-200">
                     {trendData.current.sleepHours >= 7 ? "Good" : trendData.current.sleepHours >= 6 ? "Fair" : "Poor"}
                   </Badge>
                   <div className="flex items-center gap-1 text-sm">
@@ -241,23 +241,23 @@ console.log("trendData", trendData);
                         )}
                         <span className={`font-medium ${
                           getSleepTrendInfo().trend === "up" 
-                            ? "text-green-600 dark:text-green-400" 
+                            ? "text-green-600" 
                             : getSleepTrendInfo().trend === "down"
-                            ? "text-red-600 dark:text-red-400"
-                            : "text-blue-600 dark:text-blue-400"
+                            ? "text-red-600"
+                            : "text-blue-600"
                         }`}>
                           {getSleepTrendInfo().text}
                         </span>
                       </>
                     ) : (
-                      <span className="text-gray-600 dark:text-gray-400 font-medium">
+                      <span className="text-gray-600 font-medium">
                         {getSleepTrendInfo().text}
                       </span>
                     )}
                   </div>
                 </div>
                 <div className="relative group">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className="bg-gradient-to-r from-purple-500 to-violet-500 h-2 rounded-full" style={{
                       width: `${Math.min(100, Math.max(0, (trendData.current.sleepHours / 8) * 100))}%`
                     }}></div>
@@ -273,25 +273,18 @@ console.log("trendData", trendData);
             {/* Compliance Card */}
             <Card className="premium-card group">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className="text-lg font-display font-semibold text-gray-900 dark:text-white">Weekly Compliance</CardTitle>
+                <CardTitle className="text-lg font-display font-semibold text-gray-900">Weekly Compliance</CardTitle>
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
                   <Activity className="h-6 w-6 text-white" />
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="text-3xl font-display font-bold text-gray-900 dark:text-white">
+                <div className="text-3xl font-display font-bold text-gray-900">
                   {trendData.compliance?.current || 0}%
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                    {trendData.compliance?.trend > 0 ? (
-                      <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                    ) : trendData.compliance?.trend < 0 ? (
-                      <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />
-                    ) : (
-                      <Badge className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                    )}
-                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                    <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100">
+                    <span className="text-sm font-semibold text-blue-700">
                       {trendData.compliance?.trend > 0 
                         ? `+${trendData.compliance.trend}% from last week`
                         : trendData.compliance?.trend < 0
@@ -302,7 +295,7 @@ console.log("trendData", trendData);
                   </div>
                 </div>
                 <div className="relative group">
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2">
                     <div className="bg-gradient-to-r from-blue-500 to-cyan-500 h-2 rounded-full" style={{
                       width: `${trendData.compliance?.current || 0}%`
                     }}></div>
