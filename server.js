@@ -5,7 +5,7 @@ const emailjs = require('@emailjs/nodejs');
 require('dotenv').config();
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = dev ? "localhost" : (process.env.NEXTAUTH_URL ? new URL(process.env.NEXTAUTH_URL).hostname : "app.clienthealthtracker.com");
+const hostname = dev ? "localhost" : (process.env.NEXTAUTH_URL ? new URL(process.env.NEXTAUTH_URL).hostname : "clienthealthtracker.com");
 const port = process.env.PORT || 3000;
 
 const emailUserId = {

@@ -21,7 +21,7 @@ export default withAuth(
             try {
                 // Use a simpler approach that works reliably
                 const baseUrl = process.env.NODE_ENV === 'production'
-                    ? 'https://app.clienthealthtracker.com'
+                    ? 'https://clienthealthtracker.com'
                     : req.nextUrl.origin;
                 const checkUrl = `${baseUrl}/api/auth/check-subscription`;
                 console.log('Making request to:', checkUrl);
@@ -69,7 +69,7 @@ export default withAuth(
                 console.log('Error stack:', error.stack);
                 // On error, redirect directly to login
                 const baseUrl = process.env.NODE_ENV === 'production'
-                    ? 'https://app.clienthealthtracker.com'
+                    ? 'https://clienthealthtracker.com'
                     : req.nextUrl.origin;
                 const loginUrl = new URL('/login', baseUrl);
                 loginUrl.searchParams.set('error', 'subscription_inactive');
