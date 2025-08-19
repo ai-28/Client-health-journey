@@ -42,17 +42,23 @@ const Hero = () => {
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // Cycle through images every 4 seconds with progress bar
+  // Cycle through images every 3 seconds with smooth transitions
   useEffect(() => {
     if (isPaused) return;
 
     const interval = setInterval(() => {
       setProgress(0);
+      // Start fade out
       setIsTransitioning(true);
+      
+      // Change image after fade out completes
       setTimeout(() => {
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
-        setIsTransitioning(false);
-      }, 400); // Wait for fade out before changing image
+        // Keep transitioning for a moment to ensure smooth fade in
+        setTimeout(() => {
+          setIsTransitioning(false);
+        }, 100);
+      }, 500); // Wait for complete fade out
     }, 3000);
 
     // Progress bar animation
@@ -202,7 +208,7 @@ const Hero = () => {
                 <img
                   src={heroImages[currentImageIndex]}
                   alt="Healthcare provider using Client Health Tracker"
-                  className={`w-full h-full object-cover transition-all duration-500 ease-in-out ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
+                  className={`w-full h-full object-cover transition-all duration-700 ease-in-out ${isTransitioning ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}
                 />
               </div>
               
