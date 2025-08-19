@@ -59,13 +59,13 @@ const Hero = () => {
           setIsTransitioning(false);
         }, 100);
       }, 300); // Wait for complete fade out
-    }, 3000);
+    }, 6000);
 
     // Progress bar animation
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) return 0;
-        return prev + (100 / 30); // 100% over 3 seconds (30 * 100ms)
+        return prev + (100 / 60); // 100% over 6 seconds (60 * 100ms)
       });
     }, 100);
 
