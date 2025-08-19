@@ -58,7 +58,7 @@ const Hero = () => {
         setTimeout(() => {
           setIsTransitioning(false);
         }, 100);
-      }, 500); // Wait for complete fade out
+      }, 300); // Wait for complete fade out
     }, 3000);
 
     // Progress bar animation
