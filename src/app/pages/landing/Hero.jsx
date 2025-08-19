@@ -53,13 +53,13 @@ const Hero = () => {
         setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
         setIsTransitioning(false);
       }, 400); // Wait for fade out before changing image
-    }, 4000);
+    }, 3000);
 
     // Progress bar animation
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) return 0;
-        return prev + (100 / 40); // 100% over 4 seconds (40 * 100ms)
+        return prev + (100 / 30); // 100% over 3 seconds (30 * 100ms)
       });
     }, 100);
 
