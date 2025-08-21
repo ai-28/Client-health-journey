@@ -15,13 +15,13 @@ import {
 import { useAuth } from "@/app/context/AuthContext";
 import { useClinic } from "@/app/context/ClinicContext";
 import { Loader2 } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 const defaultLogo = "/assets/logo(2).png";
 
 export function Sidebar({ mobileOpen = false, onClose }) {
   const { user } = useAuth();
   const { clinic } = useClinic();
-  
+  const router = useRouter();
   // Use clinic logo if available, otherwise fallback to default
   const logo = clinic?.logoUrl || defaultLogo;
 console.log("logo",logo)
@@ -84,6 +84,9 @@ console.log("logo",logo)
           userRole={user.role}
           roleIcon={User}
         />
+      </div>
+      <div className="text-center text-sm text-gray-500 hover:text-gray-700 cursor-pointer" onClick={() => router.push("https://clienthealthtracker.com")}>
+        Powered by <span className="text-blue-500 font-bold">Client Health Tracker</span>
       </div>
     </div>
   );
