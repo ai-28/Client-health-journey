@@ -5,7 +5,7 @@ import { Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-const logo = "/assets/logo(2).jpg";
+const logo = "/assets/logo(2).png";
 const Header = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
