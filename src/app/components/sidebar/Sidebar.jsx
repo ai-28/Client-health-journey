@@ -16,7 +16,7 @@ import { useAuth } from "@/app/context/AuthContext";
 import { useClinic } from "@/app/context/ClinicContext";
 import { Loader2 } from "lucide-react";
 
-const defaultLogo = "/assets/logo(2).jpg";
+const defaultLogo = "/assets/logo(2).png";
 
 export function Sidebar({ mobileOpen = false, onClose }) {
   const { user } = useAuth();
