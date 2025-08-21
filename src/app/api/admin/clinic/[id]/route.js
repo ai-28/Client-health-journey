@@ -5,7 +5,7 @@ import authOptions from "@/app/lib/authoption";
 import { getServerSession } from "next-auth";
 
 export async function PUT(request, { params }) {
-    const { id } = params;
+    const { id } = await params;
     const clinic = await request.json();
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -40,7 +40,7 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
-    const { id } = params;
+    const { id } = await params;
     // const clinic = await request.json();
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -67,7 +67,7 @@ export async function DELETE(request, { params }) {
 }
 
 export async function PATCH(request, { params }) {
-    const { id } = params;
+    const { id } = await params;
     try {
         const clinicAdmin = await userRepo.getClinicAdmin(id);
         await userRepo.resetPassword(clinicAdmin.id, "password123");

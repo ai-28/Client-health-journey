@@ -23,7 +23,7 @@ const DeleteClinicDialog = ({
     const [error, setError] = useState(null);
 
     const handleDelete = async () => {
-        console.log("selectedClinic", selectedClinic);
+        console.log("selectedClinic", selectedClinic.id);
         if (!clinic) return;
 
         setIsDeleting(true);
