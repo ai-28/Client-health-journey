@@ -413,6 +413,13 @@ async function getClinicByGHLSubscriptionId(ghlSubscriptionId) {
   return result[0] || null;
 }
 
+async function getClinicName(clinicId) {
+  const result = await sql`
+    SELECT "name" FROM "Clinic" WHERE "id" = ${clinicId} LIMIT 1
+  `;
+  return result[0]?.name || null;
+}
+
 
 export const clinicRepo = {
   createClinic,
@@ -437,5 +444,6 @@ export const clinicRepo = {
   updateClinicSubscription,
   getClinicByGHLContactId,
   updateClinicGHLContactId,
-  getClinicByGHLSubscriptionId
+  getClinicByGHLSubscriptionId,
+  getClinicName
 };

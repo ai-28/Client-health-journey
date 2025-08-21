@@ -13,10 +13,17 @@ import {
   clientNavItems,
 } from "./sidebardata";
 import { useAuth } from "@/app/context/AuthContext";
+import { useClinic } from "@/app/context/ClinicContext";
 import { Loader2 } from "lucide-react";
+
+const defaultLogo = "/assets/logo(2).jpg";
 
 export function Sidebar({ mobileOpen = false, onClose }) {
   const { user } = useAuth();
+  const { clinic } = useClinic();
+  
+  // Use clinic logo if available, otherwise fallback to default
+  const logo = clinic?.logoUrl || defaultLogo;
 
   // Sidebar content
   const sidebarContent = !user ? (
@@ -33,12 +40,13 @@ export function Sidebar({ mobileOpen = false, onClose }) {
       )}
       style={mobileOpen ? {} : {}}>
       {/* Simple header */}
-      <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="p-2 bg-gray-200 rounded-lg group-hover:bg-gray-300 transition-all duration-200">
-            <BookMarked className="h-6 w-6 text-gray-700" />
-          </div>
-          <span className="font-medium text-lg text-gray-800">Client Health Tracker™</span>
+      <div className="flex items-center justify-between h-20 border-b border-gray-200 bg-gray-50">
+        <Link href="/" className="flex items-center gap-3 group mx-auto">
+          <img
+            src={logo}
+            alt="Client Health Tracker"
+            className="h-auto w-[100%] p-2"
+          />
         </Link>
         {/* Close button for mobile drawer */}
         {mobileOpen && (

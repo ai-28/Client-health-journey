@@ -23,9 +23,11 @@ import { toast } from "sonner";
 import { useClinic } from "@/app/context/ClinicContext";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import LogoUpload from "../../components/clinic/LogoUpload";
 
 const SettingsPage = () => {
   const { user, setUser } = useAuth();
+  const { clinic, setClinic, refreshClinic } = useClinic();
   const [profileForm, setProfileForm] = useState({
     name: "",
     email: "",
@@ -130,6 +132,17 @@ const SettingsPage = () => {
     });
   };
 
+  const handleLogoUpdate = (newLogoUrl) => {
+    if (clinic) {
+      setClinic({
+        ...clinic,
+        logoUrl: newLogoUrl
+      });
+    }
+    // Refresh clinic data to ensure consistency across components
+    refreshClinic();
+  };
+
   return (
     <div className="px-2 sm:px-4 md:px-6 py-4 w-full max-w-3xl mx-auto">
       <div className="mb-6">
@@ -138,8 +151,9 @@ const SettingsPage = () => {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-4">
-        <TabsList className="grid w-full max-w-md grid-cols-2 sm:grid-cols-3">
+        <TabsList className="grid w-full max-w-md grid-cols-2 sm:grid-cols-4">
           <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="branding">Branding</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
         </TabsList>
@@ -195,6 +209,14 @@ const SettingsPage = () => {
               </form>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Branding Tab */}
+        <TabsContent value="branding">
+          <LogoUpload 
+            currentLogoUrl={clinic?.logoUrl} 
+            onLogoUpdate={handleLogoUpdate}
+          />
         </TabsContent>
 
         {/* Security Tab */}

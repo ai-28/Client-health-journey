@@ -5,7 +5,7 @@ import { Heart, Menu, X } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+const logo = "/assets/logo(2).jpg";
 const Header = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,10 +16,12 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
-              <Heart className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold text-text-hero">Client Health Tracker</span>
+            <img
+              src={logo}
+              alt="Client Health Tracker"
+              className="h-16 w-auto"
+            />
+            {/* <span className="text-xl font-bold text-text-hero">Client Health Tracker</span> */}
           </Link>
 
           {/* Desktop Navigation */}

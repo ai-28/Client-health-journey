@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "../../components/ui/form";
 import { loginSchema } from "./login-schema";
-
 const LoginFormFields = ({ onSubmit, isSubmitting }) => {
   // Initialize form
   const form = useForm({

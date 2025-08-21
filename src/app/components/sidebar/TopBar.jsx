@@ -19,18 +19,29 @@ import {
 import { signOut } from "next-auth/react";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { useEffect,useState } from "react";
+
+const defaultLogo = "/assets/logo(1).jpg";
 
 const TopBar = ({ onMenuClick }) => {
   const { user } = useAuth();
   const router = useRouter();
-
-  const theme = {
-    primaryColor: null,
-    secondaryColor: null,
-    logo: null,
-    clinicName: null,
-  };
+  const [clinicName, setClinicName] = useState("");
   
+  // Use clinic logo if available, otherwise fallback to default
+  const logo = defaultLogo;
+  useEffect(() => {
+    const fetchClinicName = async () => {
+      const response = await fetch("/api/clinic/clinicName", {
+        method: "POST",
+        body: JSON.stringify({ clinicId: user?.clinic }),
+      });
+      const data = await response.json();
+      setClinicName(data.clinicName);
+    };
+    fetchClinicName();
+  }, [user]);
+
   const onSetting = () => {
     if (user?.role === "admin") {
       router.push("/admin/settings");
@@ -63,22 +74,16 @@ const TopBar = ({ onMenuClick }) => {
           
           {/* Simple logo and title section */}
           <div className="flex items-center gap-3">
-            {theme.logo ? (
+
               <img
-                src={theme.logo}
-                alt={theme.clinicName || "Clinic logo"}
+                src={logo}
+                alt="Client Health Tracker"
                 className="h-10 w-auto"
               />
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gray-200 rounded-lg">
-                  <BookMarked className="h-6 w-6 text-gray-700" />
-                </div>
-                <h2 className="text-xl md:text-2xl font-medium text-gray-800">
-                  Client Health Tracker™
-                </h2>
+              <div className="text-xl font-bold text-gray-800">
+                {clinicName}
               </div>
-            )}
+
           </div>
           
           {/* Simple role badge */}
@@ -107,13 +112,9 @@ const TopBar = ({ onMenuClick }) => {
                 className="relative h-12 w-12 rounded-lg bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-all duration-200 p-0"
               >
                 <Avatar className="h-12 w-12 rounded-lg border-2 border-gray-200">
-                  <AvatarImage
-                    src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name}`}
-                    alt={user?.name || "User"}
-                  />
-                  <AvatarFallback className="bg-gray-200 text-gray-700 font-medium text-lg">
+                  <div className="justify-center items-center h-full w-full text-3xl text-gray-700 font-bold">
                     {user?.name?.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
+                  </div>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>

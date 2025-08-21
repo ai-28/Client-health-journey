@@ -28,6 +28,20 @@ export const ClinicProvider = ({ children }) => {
     }
   }, [user]);
 
+  // Function to refresh clinic data (useful after logo updates)
+  const refreshClinic = async () => {
+    if (user?.clinic) {
+      const res = await fetch(`/api/clinic/${user.clinic}`);
+      const data = await res.json();
+      if (data.success) {
+        setClinic(data.clinic);
+        setClientLimit(data.clientLimit);
+        setPlanId(data.planId);
+        setCurrentPlan(data.currentPlan);
+      }
+    }
+  };
+
   return (
     <ClinicContext.Provider
       value={{
@@ -37,6 +51,7 @@ export const ClinicProvider = ({ children }) => {
         planId,
         currentPlan,
         setCurrentPlan,
+        refreshClinic,
       }}
     >
       {children}

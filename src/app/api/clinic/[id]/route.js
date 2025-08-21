@@ -38,7 +38,8 @@ export async function GET(req, { params }) {
             clinic: {
                 id: clinic.id,
                 name: clinic.name,
-                email: clinic.email
+                email: clinic.email,
+                logoUrl: clinic.logoUrl
             },
             clientLimit, 
             planId: plan?.id, 
