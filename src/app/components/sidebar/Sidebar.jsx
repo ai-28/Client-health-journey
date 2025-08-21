@@ -24,7 +24,7 @@ export function Sidebar({ mobileOpen = false, onClose }) {
   
   // Use clinic logo if available, otherwise fallback to default
   const logo = clinic?.logoUrl || defaultLogo;
-
+console.log("logo",logo)
   // Sidebar content
   const sidebarContent = !user ? (
     <div className="flex items-center justify-center h-screen w-full bg-gray-50 border-r border-gray-200">
@@ -45,7 +45,7 @@ export function Sidebar({ mobileOpen = false, onClose }) {
           <img
             src={logo}
             alt="Client Health Tracker"
-            className="h-auto w-[100%] p-2"
+            className="h-18 w-auto p-2"
           />
         </Link>
         {/* Close button for mobile drawer */}
@@ -63,7 +63,7 @@ export function Sidebar({ mobileOpen = false, onClose }) {
       </div>
       
       {/* Navigation section */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-y-auto">
         <SidebarNav
           items={
             user.role === "admin"

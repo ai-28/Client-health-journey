@@ -20,6 +20,7 @@ import { signOut } from "next-auth/react";
 import { useAuth } from "@/app/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect,useState } from "react";
+import { useClinic } from "@/app/context/ClinicContext";
 
 const defaultLogo = "/assets/logo(1).jpg";
 
@@ -27,9 +28,10 @@ const TopBar = ({ onMenuClick }) => {
   const { user } = useAuth();
   const router = useRouter();
   const [clinicName, setClinicName] = useState("");
-  
+  const { clinic } = useClinic();
+  console.log("clinic",clinic)
   // Use clinic logo if available, otherwise fallback to default
-  const logo = defaultLogo;
+  const logo = clinic?.logoUrl? "": defaultLogo;
   useEffect(() => {
     const fetchClinicName = async () => {
       const response = await fetch("/api/clinic/clinicName", {
@@ -77,7 +79,7 @@ const TopBar = ({ onMenuClick }) => {
 
               <img
                 src={logo}
-                alt="Client Health Tracker"
+                alt=""
                 className="h-10 w-auto"
               />
               <div className="text-xl font-bold text-gray-800">
@@ -101,7 +103,7 @@ const TopBar = ({ onMenuClick }) => {
           >
             <Bell size={20} className="text-gray-600" />
             {/* Notification indicator */}
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span>
+            {/* <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full border-2 border-white"></span> */}
           </Button>
 
           {/* Simple user dropdown */}
