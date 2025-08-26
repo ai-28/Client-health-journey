@@ -41,12 +41,13 @@ console.log("logo",logo)
       style={mobileOpen ? {} : {}}>
       {/* Simple header */}
       <div className="flex items-center justify-between h-20 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center gap-3 group mx-auto">
           <img
             src={logo}
             alt="Client Health Tracker"
             className="h-18 w-auto p-2"
           />
-
+        </div>
         {/* Close button for mobile drawer */}
         {mobileOpen && (
           <button 
