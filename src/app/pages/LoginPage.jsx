@@ -54,11 +54,22 @@ const LoginPage = () => {
         handleSubscriptionSignout();
         
         // Clear the URL parameters after showing the error
-        const newUrl = new URL(window.location);
-        newUrl.searchParams.delete('error');
-        newUrl.searchParams.delete('message');
-        newUrl.searchParams.delete('callbackUrl');
-        window.history.replaceState({}, '', newUrl);
+        // Use a small delay to ensure the error state is properly set
+        setTimeout(() => {
+          if (window.history && window.history.replaceState) {
+            const cleanUrl = window.location.pathname;
+            window.history.replaceState({}, '', cleanUrl);
+            console.log('URL cleaned to:', cleanUrl);
+          }
+        }, 100);
+      } else {
+        // If there are no subscription errors, clean the URL immediately
+        // This handles cases where users navigate directly to /login with old error params
+        if (window.location.search && window.history && window.history.replaceState) {
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState({}, '', cleanUrl);
+          console.log('No subscription error found, URL cleaned to:', cleanUrl);
+        }
       }
       
       // Fallback: Check if user was redirected from a protected route (might indicate subscription issue)
@@ -97,6 +108,13 @@ const LoginPage = () => {
     // Clear subscription error when user tries to login
     setSubscriptionError(null);
     
+    // Clean the URL when user actively tries to login
+    if (window.history && window.history.replaceState) {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, '', cleanUrl);
+      console.log('URL cleaned on login attempt to:', cleanUrl);
+    }
+    
     setIsSubmitting(true);
     try {
       const result = await signIn("credentials", {
@@ -120,6 +138,14 @@ const LoginPage = () => {
             // Sign out the user and show error
             await signOut({ redirect: false });
             setSubscriptionError(subscriptionData.message || "Your clinic subscription is inactive. Please contact your administrator.");
+            
+            // Clean the URL when showing subscription error
+            if (window.history && window.history.replaceState) {
+              const cleanUrl = window.location.pathname;
+              window.history.replaceState({}, '', cleanUrl);
+              console.log('URL cleaned when showing subscription error to:', cleanUrl);
+            }
+            
             setIsSubmitting(false);
             return;
           }
