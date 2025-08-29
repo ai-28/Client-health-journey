@@ -420,6 +420,17 @@ async function getClinicName(clinicId) {
   return result[0]?.name || null;
 }
 
+async function updateClinicSettings(clinicId, settings) {
+  const updated = await sql`
+    UPDATE "Clinic"
+    SET "name" = ${settings.clinicName},
+    "email" = ${settings.clinicEmail},
+    "phoneNumber" = ${settings.clinicPhone}
+    WHERE "id" = ${clinicId}
+  `;
+  return updated[0] || null;
+}
+
 
 export const clinicRepo = {
   createClinic,
@@ -445,5 +456,6 @@ export const clinicRepo = {
   getClinicByGHLContactId,
   updateClinicGHLContactId,
   getClinicByGHLSubscriptionId,
-  getClinicName
+  getClinicName,
+  updateClinicSettings
 };

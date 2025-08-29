@@ -1,4 +1,5 @@
 import { userRepo } from "@/app/lib/db/userRepo";
+import { clinicRepo } from "@/app/lib/db/clinicRepo";
 import { getServerSession } from "next-auth";
 
 export async function GET() {
@@ -11,7 +12,7 @@ export async function GET() {
         if (!user) {
             return Response.json({ success: false, message: "User not found" });
         }
-        
+
         return Response.json({ success: true, user: user });
     } catch (error) {
         console.error(error);
@@ -31,6 +32,17 @@ export async function PUT(req) {
         }
         const { name, email, phone, origin } = await req.json();
         console.log(name, email, phone, origin);
+
+        // If user is clinic_admin, update clinic name in clinic repository
+        if (user.role === "clinic_admin" && user.clinic && name) {
+            await clinicRepo.updateClinicSettings(user.clinic, {
+                clinicName: name,
+                clinicEmail: email || user.email,
+                clinicPhone: phone || user.phoneNumber,
+            });
+        }
+
+        // Update user information in user repository
         const updatedUser = await userRepo.updateAdminUser(user.id, name, email, phone, user.role, user.isActive, origin);
         return Response.json({ success: true, user: updatedUser });
     } catch (error) {
