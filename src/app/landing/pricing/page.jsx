@@ -36,6 +36,7 @@ const Pricing = () => {
       icon: <Crown className="w-8 h-8" />,
       description: "Advanced features for growing practices",
       features: [
+        "White label: Your practice name, your logo, your app",
         "Unlimited clients or patients",
         "Unlimited coaches within your organization",
         "Advanced AI-driven nutrition coaching and analysis",
