@@ -96,9 +96,11 @@ export default function HealthManagementApp() {
         if (data.client) {
           setClientProgram(data.client);
           // Set the current program ID in editableProfile
+          const newProgramId = data.client.programId || "no-program";
+          console.log("Setting programId in editableProfile:", newProgramId);
           setEditableProfile(prev => ({
             ...prev,
-            programId: data.client.programId || "no-program"
+            programId: newProgramId
           }));
         }
       }
@@ -137,18 +139,31 @@ export default function HealthManagementApp() {
     setLoading(true);
     setError(null);
     try {
+      const requestBody = {
+        profileData: editableProfile,
+        healthConditions,
+        customRequests,
+        coachingPrefs,
+        programId: editableProfile.programId === "no-program" ? null : editableProfile.programId,
+      };
+      
+      console.log("Sending update request:", requestBody);
+      
       const res = await fetch(`/api/coach/client/${id}/profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          profileData: editableProfile,
-          healthConditions,
-          customRequests,
-          coachingPrefs,
-          programId: editableProfile.programId === "no-program" ? null : editableProfile.programId,
-        }),
+        body: JSON.stringify(requestBody),
       });
-      if (!res.ok) throw new Error("Failed to update profile");
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Update failed:", errorData);
+        throw new Error("Failed to update profile");
+      }
+      
+      const result = await res.json();
+      console.log("Update successful:", result);
+      
       setIsProfileModalOpen(false);
       // Refresh the profile data to get updated program info
       await fetchAndSetProfile();
@@ -917,7 +932,7 @@ export default function HealthManagementApp() {
                 <Button variant="outline" onClick={closeProfileModal} className="flex-1 bg-transparent">
                   Cancel
                 </Button>
-                <Button onClick={()=>setIsProfileModalOpen(false)} className="flex-1 bg-teal-600 hover:bg-teal-700">
+                <Button onClick={handleSaveChanges} className="flex-1 bg-teal-600 hover:bg-teal-700">
                   Save Profile
                 </Button>
               </div>

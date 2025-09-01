@@ -58,13 +58,14 @@ export async function PUT(req, { params }) {
     const { id } = params;
     const { profileData, healthConditions, customRequests, coachingPrefs, programId } = await req.json();
 
+    console.log("Updating client program:", { clientId: id, programId });
+
     // Update client profile
     const updated = await clientProfileRepo.updateClientProfile(id, profileData, healthConditions, customRequests, coachingPrefs);
 
-    // Update client program if provided
-    if (programId) {
-        await clientRepo.updateClientProgram(id, programId);
-    }
+    // Update client program (including setting to null)
+    const updatedClient = await clientRepo.updateClientProgram(id, programId);
+    console.log("Client program updated:", updatedClient);
 
     return NextResponse.json({ profile: updated });
 }
