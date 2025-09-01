@@ -98,7 +98,7 @@ export default function HealthManagementApp() {
           // Set the current program ID in editableProfile
           setEditableProfile(prev => ({
             ...prev,
-            programId: data.client.programId || ""
+            programId: data.client.programId || "no-program"
           }));
         }
       }
@@ -145,7 +145,7 @@ export default function HealthManagementApp() {
           healthConditions,
           customRequests,
           coachingPrefs,
-          programId: editableProfile.programId,
+          programId: editableProfile.programId === "no-program" ? null : editableProfile.programId,
         }),
       });
       if (!res.ok) throw new Error("Failed to update profile");
@@ -886,8 +886,8 @@ export default function HealthManagementApp() {
               <div>
                 <Label className="text-sm font-medium">Program</Label>
                 <Select
-                  value={editableProfile?.programId || ""}
-                  onValueChange={(value) => updateEditableProfile("programId", value)}
+                  value={editableProfile?.programId || "no-program"}
+                  onValueChange={(value) => updateEditableProfile("programId", value === "no-program" ? null : value)}
                   disabled={isProgramsLoading}
                 >
                   <SelectTrigger className="mt-1">
@@ -900,7 +900,7 @@ export default function HealthManagementApp() {
                     )}
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No program</SelectItem>
+                    <SelectItem value="no-program">No program</SelectItem>
                     {availablePrograms.map((program) => (
                       <SelectItem key={program.id} value={program.id}>
                         {program.program_name} ({program.program_type}) - {program.program_length} days
