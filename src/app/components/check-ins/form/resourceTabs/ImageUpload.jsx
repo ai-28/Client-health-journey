@@ -194,6 +194,21 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Validate file size (10MB limit)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        toast.error("Image file too large. Maximum size is 10MB");
+        event.target.value = ''; // Clear the input
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error("Please select an image file");
+        event.target.value = ''; // Clear the input
+        return;
+      }
+      
       setSelectedFile(file);
       setPreviewUrl(URL.createObjectURL(file));
     }
@@ -220,7 +235,15 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     canvas.toBlob((blob) => {
       if (blob) {
-        setSelectedFile(new File([blob], `photo_${Date.now()}.jpg`, { type: "image/jpeg" }));
+        // Validate file size (10MB limit)
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (blob.size > maxSize) {
+          toast.error("Captured image too large. Please try again with lower resolution.");
+          return;
+        }
+        
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
+        setSelectedFile(new File([blob], `photo_${timestamp}.jpg`, { type: "image/jpeg" }));
         setPreviewUrl(URL.createObjectURL(blob));
         setShowCamera(false);
       }
@@ -237,15 +260,33 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
       const formData = new FormData();
       formData.append("image", selectedFile);
       formData.append("description", description);
-      const current = new Date();
+      const current = new Date().toISOString();
       formData.append("date", current);
-      // Upload to your API endpoint
-      const response = await fetch("/api/admin/resource/image", {
+      
+      // Debug: Log the form data being sent
+      console.log("Uploading file:", {
+        name: selectedFile.name,
+        size: selectedFile.size,
+        type: selectedFile.type,
+        description: description,
+        date: current
+      });
+      
+      // Upload to client-specific API endpoint
+      const response = await fetch("/api/client/resource/image", {
         method: "POST",
         body: formData,
       });
+      
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned non-JSON response. Please try again.");
+      }
+      
       const data = await response.json();
-      if (data.status && data.url) {
+      
+      if (response.ok && data.status && data.url) {
         toast.success("Image uploaded successfully");
         onUpload({ url: data.url, description });
         setSelectedFile(null);
@@ -253,10 +294,17 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
         setDescription("");
         onOpenChange(false);
       } else {
+        // Log the full error response for debugging
+        console.error("Upload failed:", data);
         throw new Error(data.message || "Upload failed");
       }
     } catch (error) {
-      toast.error(error.message || "Failed to upload image");
+      console.error("Upload error:", error);
+      if (error.message.includes("non-JSON response")) {
+        toast.error("Server error. Please try again later.");
+      } else {
+        toast.error(error.message || "Failed to upload image");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -421,7 +469,11 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
                   id="description"
                   placeholder="Add a description (optional)"
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => {
+                    // Sanitize the description to prevent validation errors
+                    const sanitizedValue = e.target.value.replace(/[<>]/g, ''); // Remove < and > characters
+                    setDescription(sanitizedValue);
+                  }}
                   className="w-full"
                 />
               </div>
