@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/components/ui/card"
-import { FileText, Sparkles, Plus } from "lucide-react"
+import { FileText, Sparkles, Plus, Globe } from "lucide-react"
 import ProgramDetailsCard from "@/app/components/programs/ProgramDetailsCard"
 import { Button } from "../../components/ui/button";
 import { Skeleton } from "../../components/ui/skeleton";
@@ -12,6 +12,7 @@ import TempTableForProgram from "../../components/programs/TempTableForProgram";
 import TemplateDetailsDialog from "../../components/programs/TemplateDetailsDialog";
 import  EditProgramDialogue  from "@/app/components/programs/EditProgramDialogue";
 import ProgramTable from "@/app/components/programs/ProgramTable"
+import SystemProgramSelector from "@/app/components/programs/SystemProgramSelector"
 
 export default function ProgramsPage() {
   const [currentStep, setCurrentStep] = useState("")
@@ -190,6 +191,22 @@ export default function ProgramsPage() {
           </CardContent>
         </Card>       
           <ProgramDetailsCard open = {open} setOpen = {setOpen} selectedTemplate={selectedTemplate} fetchPrograms={fetchPrograms}/>
+        
+        {/* System Admin Programs Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="w-5 h-5" />
+              System Admin Programs
+            </CardTitle>
+            <p className="text-sm text-gray-600 font-normal">
+              Select which system programs you want to make available to your clinic
+            </p>
+          </CardHeader>
+          <CardContent>
+            <SystemProgramSelector />
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

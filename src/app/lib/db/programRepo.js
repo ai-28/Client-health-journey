@@ -39,8 +39,24 @@ async function getPrograms(clinicId) {
   const programs = await sql`
   SELECT * 
   FROM "Program"
-  WHERE "clinicId" = ${clinicId} OR "all" = 'all'
-`;
+  WHERE "clinicId" = ${clinicId} 
+     OR ("all" = 'all' 
+         AND "idArrayToShow" IS NOT NULL 
+         AND "idArrayToShow" != '' 
+         AND ${clinicId}::text = ANY(string_to_array("idArrayToShow", ',')))
+  `;
+
+  return programs;
+}
+
+async function getClinicSpecificPrograms(clinicId) {
+  // Get only clinic-specific programs (exclude system admin programs)
+  const programs = await sql`
+    SELECT * 
+    FROM "Program"
+    WHERE "clinicId" = ${clinicId}
+    ORDER BY "created_at" DESC
+  `;
 
   // Get client counts grouped by programId
   const clientCounts = await sql`
@@ -71,7 +87,11 @@ async function getProsForCreateClient(clinicId) {
   description,
   program_length 
   FROM "Program"
-  WHERE "clinicId" = ${clinicId} OR "all" = 'all'
+  WHERE "clinicId" = ${clinicId} 
+     OR ("all" = 'all' 
+         AND "idArrayToShow" IS NOT NULL 
+         AND "idArrayToShow" != '' 
+         AND ${clinicId}::text = ANY(string_to_array("idArrayToShow", ',')))
 `;
 
   // Get client counts grouped by programId
@@ -427,9 +447,106 @@ async function getProgrambyId(id) {
   return program || null;
 }
 
+/**
+ * Get all system admin programs (programs with all = 'all') with clinic access status
+ */
+async function getSystemAdminProgramsWithClinicAccess(clinicId) {
+  const programs = await sql`
+    SELECT 
+      *,
+      CASE 
+        WHEN "idArrayToShow" IS NOT NULL 
+             AND "idArrayToShow" != '' 
+             AND ${clinicId}::text = ANY(string_to_array("idArrayToShow", ',')) THEN true
+        ELSE false
+      END as has_access
+    FROM "Program" 
+    WHERE "all" = 'all' 
+    ORDER BY "created_at" DESC
+  `;
+
+  return programs;
+}
+
+/**
+ * Add a clinic ID to a program's idArrayToShow array
+ */
+async function addClinicToProgramAccess(programId, clinicId) {
+  try {
+    const result = await sql`
+      UPDATE "Program" 
+      SET "idArrayToShow" = CASE 
+        WHEN "idArrayToShow" IS NULL OR "idArrayToShow" = '' THEN ${clinicId}::text
+        ELSE "idArrayToShow" || ',' || ${clinicId}::text
+      END
+      WHERE id = ${programId}
+      RETURNING *
+    `;
+
+    if (result.length === 0) {
+      throw new Error("Program not found");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error adding clinic to program access:", error);
+    throw error;
+  }
+}
+
+/**
+ * Remove a clinic ID from a program's idArrayToShow array
+ */
+async function removeClinicFromProgramAccess(programId, clinicId) {
+  try {
+    const result = await sql`
+      UPDATE "Program" 
+      SET "idArrayToShow" = CASE 
+        WHEN "idArrayToShow" IS NULL OR "idArrayToShow" = '' THEN ''
+        ELSE array_to_string(
+          array_remove(
+            string_to_array("idArrayToShow", ','), 
+            ${clinicId}::text
+          ), 
+          ','
+        )
+      END
+      WHERE id = ${programId}
+      RETURNING *
+    `;
+
+    if (result.length === 0) {
+      throw new Error("Program not found");
+    }
+
+    return result[0];
+  } catch (error) {
+    console.error("Error removing clinic from program access:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get programs that a clinic has access to (either directly or through idArrayToShow)
+ */
+async function getClinicAccessiblePrograms(clinicId) {
+  const programs = await sql`
+    SELECT * FROM "Program"
+    WHERE "clinicId" = ${clinicId} 
+       OR "all" = 'all' 
+       OR ("idArrayToShow" IS NOT NULL 
+           AND "idArrayToShow" != '' 
+           AND ${clinicId}::text = ANY(string_to_array("idArrayToShow", ',')))
+    ORDER BY "created_at" DESC
+  `;
+
+  return programs;
+}
+
 export const programRepo = {
   getTemplates,
   getPrograms,
+  getClinicSpecificPrograms,
   createProgram,
   createTemplate,
   updateTemplate,
@@ -442,5 +559,9 @@ export const programRepo = {
   createProgramCoach,
   getProsForCreateClient,
   getProgrambyClientEmail,
-  getProgrambyId
+  getProgrambyId,
+  getSystemAdminProgramsWithClinicAccess,
+  addClinicToProgramAccess,
+  removeClinicFromProgramAccess,
+  getClinicAccessiblePrograms
 };
