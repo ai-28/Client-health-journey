@@ -56,31 +56,8 @@ export async function POST(request) {
         }
 
         const file = formData.get('image');
-        let description = formData.get('description') || "";
-        let date = formData.get('date') || new Date();
-
-        // Ensure date is properly formatted
-        if (typeof date === 'string') {
-            try {
-                date = new Date(date).toISOString();
-            } catch (error) {
-                date = new Date().toISOString();
-            }
-        } else {
-            date = date.toISOString();
-        }
-
-        // Sanitize description to prevent validation issues
-        description = description.replace(/[<>]/g, '').trim();
-
-        // Debug: Log the received data
-        console.log("Received upload data:", {
-            fileName: file?.name,
-            fileSize: file?.size,
-            fileType: file?.type,
-            description: description,
-            date: date
-        });
+        const description = formData.get('description') || "";
+        const date = formData.get('date') || new Date();
 
         // Validate file
         if (!file) {

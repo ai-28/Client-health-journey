@@ -204,7 +204,7 @@ All checkIn review and recommendation must be based on program totally.
       try {
         // First, try to parse the response as-is
         validAiReview = JSON.parse(aiReview);
-        
+
       } catch (parseError) {
         console.log("Initial JSON parse failed, attempting to extract valid JSON:", parseError.message);
 

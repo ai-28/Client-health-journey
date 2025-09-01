@@ -242,8 +242,7 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
           return;
         }
         
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-').replace(/[^a-zA-Z0-9-]/g, '');
-        setSelectedFile(new File([blob], `photo_${timestamp}.jpg`, { type: "image/jpeg" }));
+        setSelectedFile(new File([blob], `photo_${Date.now()}.jpg`, { type: "image/jpeg" }));
         setPreviewUrl(URL.createObjectURL(blob));
         setShowCamera(false);
       }
@@ -260,17 +259,8 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
       const formData = new FormData();
       formData.append("image", selectedFile);
       formData.append("description", description);
-      const current = new Date().toISOString();
+      const current = new Date();
       formData.append("date", current);
-      
-      // Debug: Log the form data being sent
-      console.log("Uploading file:", {
-        name: selectedFile.name,
-        size: selectedFile.size,
-        type: selectedFile.type,
-        description: description,
-        date: current
-      });
       
       // Upload to client-specific API endpoint
       const response = await fetch("/api/client/resource/image", {
@@ -294,8 +284,6 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
         setDescription("");
         onOpenChange(false);
       } else {
-        // Log the full error response for debugging
-        console.error("Upload failed:", data);
         throw new Error(data.message || "Upload failed");
       }
     } catch (error) {
@@ -469,11 +457,7 @@ export default function ImageUpload({ open, onOpenChange, onUpload }) {
                   id="description"
                   placeholder="Add a description (optional)"
                   value={description}
-                  onChange={(e) => {
-                    // Sanitize the description to prevent validation errors
-                    const sanitizedValue = e.target.value.replace(/[<>]/g, ''); // Remove < and > characters
-                    setDescription(sanitizedValue);
-                  }}
+                  onChange={(e) => setDescription(e.target.value)}
                   className="w-full"
                 />
               </div>
