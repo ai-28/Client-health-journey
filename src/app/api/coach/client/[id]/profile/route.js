@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { clientProfileRepo } from "@/app/lib/db/clientProfileRepo";
+import { clientRepo } from "@/app/lib/db/clientRepo";
 import { getServerSession } from "next-auth";
 import authOptions from "@/app/lib/authoption";
 
@@ -12,10 +13,11 @@ export async function GET(req, { params }) {
     }
     const { id } = params;
     const profile = await clientProfileRepo.getClientProfileByClientId(id);
+    const client = await clientRepo.getClientWithProgram(id);
     console.log("profile", profile)
 
     if (!profile) return NextResponse.json({ message: "Not found" }, { status: 404 });
-    return NextResponse.json({ profile });
+    return NextResponse.json({ profile, client });
 }
 
 export async function POST(req, { params }) {
@@ -54,8 +56,16 @@ export async function PUT(req, { params }) {
         return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
     const { id } = params;
-    const { profileData, healthConditions, customRequests, coachingPrefs } = await req.json();
+    const { profileData, healthConditions, customRequests, coachingPrefs, programId } = await req.json();
+
+    // Update client profile
     const updated = await clientProfileRepo.updateClientProfile(id, profileData, healthConditions, customRequests, coachingPrefs);
+
+    // Update client program if provided
+    if (programId) {
+        await clientRepo.updateClientProgram(id, programId);
+    }
+
     return NextResponse.json({ profile: updated });
 }
 

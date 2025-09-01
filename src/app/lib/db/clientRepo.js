@@ -603,6 +603,32 @@ async function getClientProfilebyId(id) {
   return result[0] || null;
 }
 
+async function getClientWithProgram(id) {
+  const result = await sql`
+    SELECT 
+      c.*,
+      p.id AS program_id,
+      p.program_name AS program_title,
+      p.program_type AS program_type,
+      p.program_length AS program_length,
+      p.description AS program_description
+    FROM "Client" c
+    LEFT JOIN "Program" p ON c."programId" = p.id
+    WHERE c.id = ${id}
+  `;
+  return result[0] || null;
+}
+
+async function updateClientProgram(clientId, programId) {
+  const result = await sql`
+    UPDATE "Client"
+    SET "programId" = ${programId}
+    WHERE id = ${clientId}
+    RETURNING *
+  `;
+  return result[0] || null;
+}
+
 async function getTrendData(email) {
   try {
     // First, get the latest check-in date for this client
@@ -797,5 +823,7 @@ export const clientRepo = {
   getProgramIdbyClientEmail,
   getClientIdbyEmail,
   getClientProfilebyId,
+  getClientWithProgram,
+  updateClientProgram,
   getTrendData,
 };

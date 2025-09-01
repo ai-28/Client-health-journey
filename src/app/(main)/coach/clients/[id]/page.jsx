@@ -44,6 +44,9 @@ export default function HealthManagementApp() {
   const [coachingPrefs, setCoachingPrefs] = useState({});
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [editableProfile, setEditableProfile] = useState({});
+  const [clientProgram, setClientProgram] = useState(null);
+  const [availablePrograms, setAvailablePrograms] = useState([]);
+  const [isProgramsLoading, setIsProgramsLoading] = useState(false);
   const [isAddConditionModalOpen, setIsAddConditionModalOpen] = useState(false);
   const [newCondition, setNewCondition] = useState({});
   const [isAddCustomConditionModalOpen, setIsAddCustomConditionModalOpen] = useState(false);
@@ -73,6 +76,7 @@ export default function HealthManagementApp() {
         setCustomRequests([]);
         setCoachingPrefs({});
         setEditableProfile({});
+        setClientProgram(null);
       } else if (!res.ok) {
         throw new Error("Failed to fetch profile");
       } else {
@@ -89,6 +93,14 @@ export default function HealthManagementApp() {
           setCoachingPrefs(safeParseJSON(data.profile.coachingPrefs, {}));
           setEditableProfile(safeParseJSON(data.profile.profileData, {}));
         }
+        if (data.client) {
+          setClientProgram(data.client);
+          // Set the current program ID in editableProfile
+          setEditableProfile(prev => ({
+            ...prev,
+            programId: data.client.programId || ""
+          }));
+        }
       }
     } catch (e) {
       setError(e.message);
@@ -97,8 +109,25 @@ export default function HealthManagementApp() {
     }
   };
 
+  // Fetch available programs for the client
+  const fetchAvailablePrograms = async () => {
+    setIsProgramsLoading(true);
+    try {
+      const response = await fetch("/api/clinic/program/programId");
+      const data = await response.json();
+      setAvailablePrograms(data.programs || []);
+    } catch (error) {
+      console.error("Failed to fetch programs:", error);
+    } finally {
+      setIsProgramsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (id) fetchAndSetProfile();
+    if (id) {
+      fetchAndSetProfile();
+      fetchAvailablePrograms();
+    }
     // eslint-disable-next-line
   }, [id]);
 
@@ -116,10 +145,13 @@ export default function HealthManagementApp() {
           healthConditions,
           customRequests,
           coachingPrefs,
+          programId: editableProfile.programId,
         }),
       });
       if (!res.ok) throw new Error("Failed to update profile");
       setIsProfileModalOpen(false);
+      // Refresh the profile data to get updated program info
+      await fetchAndSetProfile();
     } catch (e) {
       setError(e.message);
     } finally {
@@ -437,6 +469,12 @@ export default function HealthManagementApp() {
                   <div>
                     <Label className="text-sm font-medium text-gray-700">Goal</Label>
                         <p className="text-gray-900">{parsedEditableProfile.goal}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">Current Program</Label>
+                        <p className="text-gray-900">{clientProgram?.program_title || "No program assigned"}</p>
                   </div>
                 </div>
               </CardContent>
@@ -842,6 +880,36 @@ export default function HealthManagementApp() {
                 />
                 <p className="text-xs text-gray-500 mt-1">
                   Enter your food allergies separated by commas, or type "none" if you have no allergies.
+                </p>
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium">Program</Label>
+                <Select
+                  value={editableProfile?.programId || ""}
+                  onValueChange={(value) => updateEditableProfile("programId", value)}
+                  disabled={isProgramsLoading}
+                >
+                  <SelectTrigger className="mt-1">
+                    {isProgramsLoading ? (
+                      <div className="flex items-center">
+                        <span className="mr-2">Loading programs...</span>
+                      </div>
+                    ) : (
+                      <SelectValue placeholder="Select a program" />
+                    )}
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">No program</SelectItem>
+                    {availablePrograms.map((program) => (
+                      <SelectItem key={program.id} value={program.id}>
+                        {program.program_name} ({program.program_type}) - {program.program_length} days
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-gray-500 mt-1">
+                  Select a program to assign to this client.
                 </p>
               </div>
 
