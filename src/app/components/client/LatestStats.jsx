@@ -199,14 +199,14 @@ console.log("trendData", trendData);
                     <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full" style={{
                       width: trendData.goalWeight > 0 
                         ? `${Math.min(100, Math.max(0, ((trendData.initialWeight - trendData.current.weight) / (trendData.initialWeight - trendData.goalWeight)) * 100))}%`
-                        : '67%'
+                        : '0%'
                     }}></div>
                   </div>
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
                     {trendData.goalWeight > 0 
                       ? `${Math.min(100, Math.max(0, ((trendData.initialWeight - trendData.current.weight) / (trendData.initialWeight - trendData.goalWeight)) * 100)).toFixed(1)}%`
-                      : '67%'
+                      : '0%'
                     } complete
                   </div>
                 </div>
