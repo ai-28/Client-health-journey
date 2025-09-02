@@ -639,12 +639,17 @@ async function getTrendData(email) {
     `;
 
     if (!latestCheckInDate[0]?.latest_date) {
+      const iniWeight = await sql`
+        SELECT "initialWeight"
+        FROM "Client"
+        WHERE "email" = ${email}
+      `
       // No check-ins found
       return {
-        current: { weight: 0, sleepHours: 0 },
+        current: { weight: iniWeight[0]?.initialWeight || 0, sleepHours: 0 },
         currentWeek: { weight: 0, sleepHours: 0 },
         previousWeek: { weight: 0, sleepHours: 0 },
-        initialWeight: 0,
+        initialWeight: iniWeight[0]?.initialWeight || 0,
         goalWeight: 0,
         weightTrend: 0,
         sleepTrend: 0,
