@@ -98,9 +98,6 @@ const Templates = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full h-12 bg-gradient-to-r from-primary to-primary-glow hover:from-primary-glow hover:to-primary shadow-lg hover:shadow-xl transition-all font-semibold" size="lg">
-                    Learn More
-                  </Button>
                 </CardContent>
               </Card>
             ))}

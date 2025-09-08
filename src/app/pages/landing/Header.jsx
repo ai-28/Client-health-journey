@@ -35,9 +35,7 @@ const Header = () => {
             <a href="/#testimonials" className="text-text-medical hover:text-primary transition-all duration-300 ease-in-out">
               Testimonials
             </a>
-            <Link href="/landing/pricing" className="text-text-medical hover:text-primary transition-all duration-300 ease-in-out">
-              Pricing
-            </Link>
+
           </nav>
 
           {/* Desktop CTA */}
@@ -80,9 +78,6 @@ const Header = () => {
               <a href="#testimonials" className="text-text-medical hover:text-primary transition-all duration-300 ease-in-out">
                 Testimonials
               </a>
-              <Link href="/landing/pricing" className="text-text-medical hover:text-primary transition-all duration-300 ease-in-out">
-                Pricing
-              </Link>
             </nav>
             <div className="flex flex-col space-y-3 pt-4">
               <Button variant="ghost" className="text-text-medical"
