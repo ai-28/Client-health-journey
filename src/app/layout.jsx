@@ -43,7 +43,8 @@ export default function RootLayout({ children }) {
         <meta name="msapplication-TileColor" content="#2563eb" />
         <meta name="msapplication-tap-highlight" content="no" />
         <meta name="theme-color" content="#2563eb" />
-
+        <meta name="facebook-domain-verification" content="1ydp0w5phq4yvbywwp0neykez7uo56" />
+        
         <link rel="apple-touch-icon" href="/icons/icon-192x192.svg" />
         <link rel="icon" type="image/svg+xml" sizes="32x32" href="/icons/icon-32x32.svg" />
         <link rel="icon" type="image/svg+xml" sizes="16x16" href="/icons/icon-16x16.svg" />
