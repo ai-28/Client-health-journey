@@ -40,10 +40,10 @@ export async function POST(request) {
         // GHL sends subscription.status, we need to map it to our event types
         const ghlStatus = payload.event;
         let planId = payload.plan_id;
-        if (planId === "Client Health Tracker - Starter" || planId === "Client Health Tracker - Starter Founder's Special") {
+        if (planId === "Client Health Tracker - Starter" || planId === "Client Health Tracker - Starter Founder's Special" || planId === "Client Health Tracker - $39/mo Starter") {
             planId = "starter";
         }
-        else if (planId === "Client Health Tracker - Pro" || planId === "Client Health Tracker - Founder's Special" || planId === "Client Health Tracker Pro - Annual (30% Savings)") {
+        else if (planId === "Client Health Tracker - Pro" || planId === "Client Health Tracker - Founder's Special" || planId === "Client Health Tracker Pro - Annual (30% Savings)" || planId === "Client Health Tracker - $59/mo Pro") {
             planId = "pro";
         }
         const automationTrigger = mapGHLStatusToTrigger(ghlStatus);
