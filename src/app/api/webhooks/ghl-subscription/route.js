@@ -98,7 +98,11 @@ function mapGHLStatusToTrigger(ghlStatus) {
         'created': 'subscription.activated',
         'incomplete': 'subscription.activated', // Handle incomplete status
         'canceled': 'subscription.cancelled',
+        'cancelled': 'subscription.cancelled', // Handle both spellings
         'deactivated': 'subscription.cancelled',
+        'expired': 'subscription.expired', // NEW: Handle expired subscriptions
+        'past_due': 'subscription.payment_failed', // NEW: Handle past due
+        'unpaid': 'subscription.payment_failed', // NEW: Handle unpaid
         'failed': 'subscription.payment_failed',
         'payment_failed': 'subscription.payment_failed',
         'renewed': 'subscription.renewed',
@@ -126,6 +130,10 @@ async function handleSubscriptionDatabaseActions(trigger, eventData) {
 
             case 'subscription.cancelled':
                 await handleSubscriptionCancellation(eventData);
+                break;
+
+            case 'subscription.expired':
+                await handleSubscriptionExpiration(eventData);
                 break;
 
             case 'subscription.renewed':
@@ -240,6 +248,34 @@ async function handleSubscriptionActivation(eventData) {
 }
 
 /**
+ * Handle subscription expiration database operations
+ */
+async function handleSubscriptionExpiration(eventData) {
+    const {
+        subscription_id,
+        customer_email
+    } = eventData;
+
+    const clinic = await clinicRepo.getClinicByEmail(customer_email);
+    console.log(`Subscription expired for clinic: ${clinic?.id}`);
+
+    if (!clinic) {
+        console.error('Clinic not found for subscription expiration:', eventData);
+        return;
+    }
+
+    // Update subscription status to inactive with current date as end date
+    await subscriptionRepo.cancelSubscriptionStatus(
+        clinic.id,
+        false,
+        subscription_id,
+        new Date() // Set end date to current date
+    );
+
+    console.log(`✅ Subscription expired and deactivated for clinic: ${clinic.id}`);
+}
+
+/**
  * Handle subscription cancellation database operations
  */
 async function handleSubscriptionCancellation(eventData) {
@@ -291,10 +327,10 @@ async function handleSubscriptionRenewal(eventData) {
         return;
     }
 
-    // Calculate new end date for renewal (30 days from current date or start_date)
-    const renewalStartDate = start_date ? new Date(start_date) : new Date();
-    const newEndDate = new Date(renewalStartDate);
-    newEndDate.setDate(newEndDate.getDate() + 30); // Add 30 days for monthly renewal
+    // Calculate new end date for renewal (30 days from existing end date, not payment date)
+    const currentEndDate = new Date(subscriptionTier.endDate);
+    const newEndDate = new Date(currentEndDate);
+    newEndDate.setDate(newEndDate.getDate() + 30); // Add 30 days from current end date
 
     // Update subscription with new end date
     await subscriptionRepo.renewalSubscriptionStatus(
@@ -304,7 +340,7 @@ async function handleSubscriptionRenewal(eventData) {
         newEndDate
     );
 
-    console.log(`Subscription renewed for clinic: ${clinic.id} - New end date: ${newEndDate.toISOString()}`);
+    console.log(`Subscription renewed for clinic: ${clinic.id} - Extended from ${currentEndDate.toISOString()} to ${newEndDate.toISOString()}`);
 }
 
 /**
