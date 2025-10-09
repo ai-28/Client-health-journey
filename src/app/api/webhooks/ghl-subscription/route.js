@@ -58,7 +58,7 @@ export async function POST(request) {
             planId = "starter";
         }
         const automationTrigger = mapGHLStatusToTrigger(ghlStatus);
-
+        console.log("ghlStatus", ghlStatus);
         // Normalize the flat payload into the expected structure
         const normalizedEventData = {
             subscription_id: payload.subscriptionId,
