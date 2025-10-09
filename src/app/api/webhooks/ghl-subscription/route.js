@@ -40,11 +40,22 @@ export async function POST(request) {
         // GHL sends subscription.status, we need to map it to our event types
         const ghlStatus = payload.event;
         let planId = payload.plan_id;
-        if (planId === "Client Health Tracker - Starter" || planId === "Client Health Tracker - Starter Founder's Special" || planId === "Client Health Tracker - $39/mo Starter") {
+
+        // Normalize plan ID to lowercase for case-insensitive comparison
+        const normalizedPlanId = planId?.toLowerCase();
+
+        // Map GHL plan names to internal plan IDs
+        if (normalizedPlanId?.includes("starter")) {
             planId = "starter";
         }
-        else if (planId === "Client Health Tracker - Pro" || planId === "Client Health Tracker - Founder's Special" || planId === "Client Health Tracker Pro - Annual (30% Savings)" || planId === "Client Health Tracker - $59/mo Pro") {
+        else if (normalizedPlanId?.includes("pro")) {
             planId = "pro";
+        }
+        else {
+            // Log unknown plan ID for debugging
+            console.warn(`Unknown plan ID received: ${planId}`);
+            // Default to starter plan or handle as needed
+            planId = "starter";
         }
         const automationTrigger = mapGHLStatusToTrigger(ghlStatus);
 
